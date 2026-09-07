@@ -6,6 +6,7 @@ import 'screens/ai_processing/domain_overview_screen.dart';
 import 'screens/backend_test/backend_test_screen.dart';
 import 'screens/journey/todays_journey_screen.dart';
 import 'screens/language/language_selection_screen.dart';
+import 'screens/memory/personal_memory_space_screen.dart';
 import 'screens/onboarding/caregiver_onboarding_screen.dart';
 import 'screens/role/role_selection_screen.dart';
 import 'screens/splash/splash_screen.dart';
@@ -33,6 +34,7 @@ class DementiaAssistApp extends StatelessWidget {
         AppRoutes.aiProcessing: (context) => const AiProcessingScreen(),
         AppRoutes.domainOverview: (context) => const DomainOverviewScreen(),
         AppRoutes.todaysJourney: (context) => const TodaysJourneyScreen(),
+        AppRoutes.memoryVault: (context) => const PersonalMemorySpaceScreen(),
         '/backend_test': (context) => const BackendTestScreen(),
       },
     );

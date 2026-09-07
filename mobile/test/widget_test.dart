@@ -5,6 +5,7 @@ import 'package:mobile/core/navigation/app_routes.dart';
 import 'package:mobile/screens/ai_processing/domain_overview_screen.dart';
 import 'package:mobile/screens/journey/todays_journey_screen.dart';
 import 'package:mobile/screens/language/language_selection_screen.dart';
+import 'package:mobile/screens/memory/personal_memory_space_screen.dart';
 import 'package:mobile/screens/onboarding/caregiver_onboarding_screen.dart';
 import 'package:mobile/screens/role/role_selection_screen.dart';
 import 'package:mobile/screens/splash/splash_screen.dart';
@@ -118,5 +119,22 @@ void main() {
     expect(find.text('Is a caregiver with you right now?'), findsOneWidget);
     expect(find.text(AppStrings.get('yes_together')), findsOneWidget);
     expect(find.text(AppStrings.get('no_independent')), findsOneWidget);
+  });
+
+  testWidgets('Personal Memory Space displays category chips and memories with activity usage tags', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: PersonalMemorySpaceScreen(),
+      ),
+    );
+    await tester.pump();
+
+    expect(find.text('Personal Memory Space'), findsOneWidget);
+    expect(find.text('Photos'), findsOneWidget);
+    expect(find.text('Music'), findsOneWidget);
+    expect(find.text('Places'), findsOneWidget);
+    expect(find.text('Add Content'), findsOneWidget);
+    expect(find.text('Grandmother’s Veranda in Tezpur'), findsOneWidget);
+    expect(find.textContaining('Used in:'), findsWidgets);
   });
 }

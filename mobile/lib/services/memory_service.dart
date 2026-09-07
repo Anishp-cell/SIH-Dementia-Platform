@@ -37,6 +37,15 @@ class MemoryService extends ChangeNotifier {
     notifyListeners();
   }
 
+  void updateMemory(MemoryItem item) {
+    initialize();
+    final index = _memories.indexWhere((m) => m.id == item.id);
+    if (index != -1) {
+      _memories[index] = item;
+      notifyListeners();
+    }
+  }
+
   void deleteMemory(String id) {
     _memories.removeWhere((m) => m.id == id);
     notifyListeners();

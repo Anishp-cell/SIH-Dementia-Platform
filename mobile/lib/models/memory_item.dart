@@ -55,4 +55,47 @@ class MemoryItem {
         return 'Conversation Prompt';
     }
   }
+
+  List<String> get activityUsageLabels {
+    switch (type) {
+      case MemoryType.photo:
+      case MemoryType.person:
+        return ['Family Match & Tell', 'Look & Talk', 'Story from Photo'];
+      case MemoryType.place:
+        return ['Look & Talk', 'Story from Photo', 'Orientation Reminiscing'];
+      case MemoryType.music:
+        return ['Music & Memory', 'Listen & Remember'];
+      case MemoryType.story:
+      case MemoryType.conversationPrompt:
+        return ['Look & Talk', 'Together Conversation', 'Story from Photo'];
+      case MemoryType.object:
+        return ['Familiar Object Match', 'Remember & Recall'];
+    }
+  }
+
+  MemoryItem copyWith({
+    String? title,
+    MemoryType? type,
+    String? relationOrContext,
+    String? audioAssetPath,
+    String? iconOrImagePath,
+    List<String>? tags,
+    List<String>? allowedUsage,
+    bool? isCaregiverApproved,
+    SyncStatus? syncStatus,
+  }) {
+    return MemoryItem(
+      id: id,
+      title: title ?? this.title,
+      type: type ?? this.type,
+      relationOrContext: relationOrContext ?? this.relationOrContext,
+      audioAssetPath: audioAssetPath ?? this.audioAssetPath,
+      iconOrImagePath: iconOrImagePath ?? this.iconOrImagePath,
+      tags: tags ?? this.tags,
+      allowedUsage: allowedUsage ?? this.allowedUsage,
+      isCaregiverApproved: isCaregiverApproved ?? this.isCaregiverApproved,
+      syncStatus: syncStatus ?? this.syncStatus,
+      dateAdded: dateAdded,
+    );
+  }
 }
