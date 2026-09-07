@@ -4,15 +4,17 @@ import '../../core/constants/app_strings.dart';
 import '../../core/constants/app_typography.dart';
 import '../../core/navigation/app_routes.dart';
 import '../../models/activity_item.dart';
+import '../../models/ai_recommendation.dart';
 import '../../services/profile_service.dart';
 import '../../services/recommendation_service.dart';
 import '../../widgets/common/calm_card.dart';
 import '../../widgets/common/elder_button.dart';
+import '../../widgets/common/feedback_banner.dart';
 import '../../widgets/common/voice_instruction_bar.dart';
 
-/// Screen representing Today's Gentle Journey hub.
-/// Organizes daily activities along an unpaced garden path motif
-/// and adapts based on whether a caregiver is currently present.
+/// Screen representing Today's Gentle Journey (Patient Home).
+/// Driven by dynamic recommendation model, offers large touch targets,
+/// spoken instructions, gentle music alternatives, and safe exit actions.
 class TodaysJourneyScreen extends StatefulWidget {
   const TodaysJourneyScreen({super.key});
 
@@ -24,6 +26,75 @@ class _TodaysJourneyScreenState extends State<TodaysJourneyScreen> {
   bool _isCaregiverPresent = true;
 
   @override
+  void initState() {
+    super.initState();
+    RecommendationService.instance.addListener(_onServiceUpdate);
+    ProfileService.instance.addListener(_onServiceUpdate);
+  }
+
+  void _onServiceUpdate() {
+    if (mounted) setState(() {});
+  }
+
+  @override
+  void dispose() {
+    RecommendationService.instance.removeListener(_onServiceUpdate);
+    ProfileService.instance.removeListener(_onServiceUpdate);
+    super.dispose();
+  }
+
+  void _handleFinishSession() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.backgroundWarm,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: const BoxDecoration(
+                color: AppColors.surfaceWarm,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.spa, color: AppColors.forestPrimary, size: 28),
+            ),
+            const SizedBox(width: 12),
+            const Expanded(
+              child: Text('Rest for Today?', style: AppTypography.patientTitle),
+            ),
+          ],
+        ),
+        content: const Text(
+          'You have spent a wonderful, peaceful moment with us today. Your progress is completely preserved.',
+          style: AppTypography.caregiverBody,
+        ),
+        actionsPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        actions: [
+          ElderButton(
+            label: 'Keep Exploring',
+            icon: Icons.play_arrow,
+            variant: ElderButtonVariant.primary,
+            height: 50,
+            onPressed: () => Navigator.of(ctx).pop(),
+          ),
+          const SizedBox(height: 10),
+          ElderButton(
+            label: 'Finish Session Gently',
+            icon: Icons.check_circle_outline,
+            variant: ElderButtonVariant.secondary,
+            height: 50,
+            onPressed: () {
+              Navigator.of(ctx).pop();
+              Navigator.of(context).pushReplacementNamed(AppRoutes.roleSelection);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     final patient = ProfileService.instance.activeProfile;
     final patientName = patient?.preferredName ?? 'Friend';
@@ -32,21 +103,26 @@ class _TodaysJourneyScreenState extends State<TodaysJourneyScreen> {
       isCaregiverPresent: _isCaregiverPresent,
     );
 
+    final recommendation = RecommendationService.instance.currentRecommendation;
+    final isDelayedOffline = recommendation?.status == AiProcessingStatus.delayedOffline;
+
+    final primaryActivity = activities.isNotEmpty ? activities.first : null;
+
     return Scaffold(
       backgroundColor: AppColors.backgroundWarm,
       appBar: AppBar(
         title: Text(AppStrings.get('todays_journey'), style: AppTypography.patientTitle),
         actions: [
           IconButton(
-            icon: const Icon(Icons.dashboard_outlined, color: AppColors.forestPrimary),
-            tooltip: 'Caregiver Dashboard',
+            icon: const Icon(Icons.photo_album_outlined, color: AppColors.forestPrimary),
+            tooltip: 'Personal Memory Space',
             onPressed: () {
-              Navigator.of(context).pushNamed(AppRoutes.caregiverDashboard);
+              Navigator.of(context).pushNamed(AppRoutes.memoryVault);
             },
           ),
           IconButton(
             icon: const Icon(Icons.switch_account_outlined, color: AppColors.forestPrimary),
-            tooltip: 'Switch Role / Home',
+            tooltip: 'Switch Mode / Home',
             onPressed: () {
               Navigator.of(context).pushReplacementNamed(AppRoutes.roleSelection);
             },
@@ -55,43 +131,51 @@ class _TodaysJourneyScreenState extends State<TodaysJourneyScreen> {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 22.0, vertical: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 22.0, vertical: 14.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Voice Instruction & Warm Greeting Bar
+              // Voice Instruction & Greeting Bar
               VoiceInstructionBar(
-                instructionText: 'Welcome back, $patientName. Today is peaceful. Let us enjoy gentle activities together.',
+                instructionText: 'Welcome back, $patientName. Today is peaceful. Here is your recommended activity.',
+                autoPlay: false,
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
+
+              // Offline notice banner if delayed offline
+              if (isDelayedOffline) ...[
+                const FeedbackBanner(
+                  type: FeedbackBannerType.info,
+                  title: 'Offline Mode Active',
+                  message: 'Your activities are loaded safely from local storage. Everything works without internet.',
+                ),
+                const SizedBox(height: 14),
+              ],
 
               // Caregiver Presence Triage Card
               CalmCard(
                 backgroundColor: AppColors.surfaceWarm,
-                padding: const EdgeInsets.all(18),
+                padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Row(
+                    Row(
                       children: [
-                        Icon(Icons.people_outline, color: AppColors.forestPrimary, size: 26),
-                        SizedBox(width: 10),
-                        Text(
-                          'Is a caregiver with you right now?',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.textPrimary,
+                        const Icon(Icons.people_outline, color: AppColors.forestPrimary, size: 24),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            AppStrings.get('caregiver_present_q'),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.textPrimary,
+                            ),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 6),
-                    const Text(
-                      'We adjust activities so you can either play together or enjoy relaxing solo moments.',
-                      style: AppTypography.caregiverCaption,
-                    ),
-                    const SizedBox(height: 14),
+                    const SizedBox(height: 12),
                     Row(
                       children: [
                         Expanded(
@@ -116,52 +200,205 @@ class _TodaysJourneyScreenState extends State<TodaysJourneyScreen> {
                   ],
                 ),
               ),
-              const SizedBox(height: 24),
-
-              // Journey Path Header
-              Row(
-                children: [
-                  const Icon(Icons.park_outlined, color: AppColors.sage, size: 24),
-                  const SizedBox(width: 10),
-                  Text(
-                    _isCaregiverPresent ? 'Shared Moments Together' : 'Independent Peaceful Path',
-                    style: AppTypography.patientTitle,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                '3 unhurried activities for today. There are no timers, no grades, and no pressure.',
-                style: AppTypography.caregiverBody,
-              ),
-              const SizedBox(height: 16),
-
-              // Activity Cards
-              ...List.generate(activities.length, (index) {
-                final activity = activities[index];
-                return _buildActivityCard(context, activity, index + 1, activities.length);
-              }),
-
               const SizedBox(height: 20),
 
-              // Shortcuts footer
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              // Dynamic Hero Card: Today's Recommended Activity
+              if (primaryActivity != null) ...[
+                const Row(
+                  children: [
+                    Icon(Icons.auto_awesome, color: AppColors.forestPrimary, size: 22),
+                    SizedBox(width: 8),
+                    Text("Today's Recommendation", style: AppTypography.patientTitle),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  _isCaregiverPresent
+                      ? 'Caregiver present: Shared connection and gentle recognition.'
+                      : 'Independent play: Unpaced, self-guided gentle activity.',
+                  style: AppTypography.caregiverBody,
+                ),
+                const SizedBox(height: 14),
+
+                // Featured Hero Card
+                CalmCard(
+                  padding: const EdgeInsets.all(22),
+                  borderColor: AppColors.forestPrimary.withValues(alpha: 0.25),
+                  borderWidth: 1.8,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(14),
+                            decoration: BoxDecoration(
+                              color: primaryActivity.themeColor.withValues(alpha: 0.12),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(primaryActivity.icon, size: 34, color: primaryActivity.themeColor),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  primaryActivity.patientFriendlyTitle,
+                                  style: AppTypography.patientHero.copyWith(fontSize: 22),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  primaryActivity.subtitle,
+                                  style: AppTypography.caregiverBody,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Gentle Non-Clinical Reason Badge
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: AppColors.surfaceWarm,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: AppColors.borderSoft),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.lightbulb_outline, size: 18, color: AppColors.forestPrimary),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                'Recommended for you: Based on your morning routine and fondness for familiar nature.',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.forestDark.withValues(alpha: 0.9),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Cultural tags chips
+                      Wrap(
+                        spacing: 6,
+                        children: primaryActivity.culturalTags.map((tag) {
+                          return Chip(
+                            label: Text(tag, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600)),
+                            backgroundColor: AppColors.surfaceWarm,
+                            padding: EdgeInsets.zero,
+                            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          );
+                        }).toList(),
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Large Start Activity Action
+                      ElderButton(
+                        label: 'Start Recommended Activity',
+                        icon: Icons.play_arrow,
+                        variant: ElderButtonVariant.primary,
+                        height: 58,
+                        onPressed: () {
+                          if (_isCaregiverPresent) {
+                            Navigator.of(context).pushNamed(AppRoutes.togetherModeEntry);
+                          } else {
+                            Navigator.of(context).pushNamed(AppRoutes.independentModeEntry);
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
+              ],
+
+              // Gentle Alternative: Music & Peaceful Connection
+              CalmCard(
+                backgroundColor: AppColors.surfaceWarm,
+                padding: const EdgeInsets.all(18),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.music_note, color: AppColors.forestPrimary, size: 28),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Prefer a Quiet Moment?',
+                            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+                          ),
+                          const SizedBox(height: 2),
+                          const Text(
+                            'Listen to soothing flute melodies or browse familiar photos together.',
+                            style: AppTypography.caregiverCaption,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pushNamed(AppRoutes.connectionMusic);
+                      },
+                      child: const Text('Listen', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              // Other Gentle Choices
+              const Row(
                 children: [
-                  TextButton.icon(
-                    icon: const Icon(Icons.photo_album_outlined, size: 20, color: AppColors.forestPrimary),
-                    label: const Text('Memory Vault', style: TextStyle(color: AppColors.forestPrimary, fontWeight: FontWeight.w600)),
-                    onPressed: () => Navigator.of(context).pushNamed(AppRoutes.memoryVault),
-                  ),
-                  const SizedBox(width: 16),
-                  TextButton.icon(
-                    icon: const Icon(Icons.bar_chart, size: 20, color: AppColors.forestPrimary),
-                    label: const Text('Activity Trends', style: TextStyle(color: AppColors.forestPrimary, fontWeight: FontWeight.w600)),
-                    onPressed: () => Navigator.of(context).pushNamed(AppRoutes.caregiverDashboard),
-                  ),
+                  Icon(Icons.park_outlined, color: AppColors.sage, size: 22),
+                  SizedBox(width: 8),
+                  Text('Other Gentle Activities Today', style: AppTypography.patientTitle),
                 ],
               ),
+              const SizedBox(height: 6),
+              const Text(
+                'Explore anytime. No timers, no scoring, and no pressure.',
+                style: AppTypography.caregiverBody,
+              ),
               const SizedBox(height: 12),
+
+              // Activity Cards for index 1 and beyond
+              ...List.generate(activities.length > 1 ? activities.length - 1 : 0, (i) {
+                final activity = activities[i + 1];
+                return _buildSecondaryActivityCard(context, activity);
+              }),
+
+              const SizedBox(height: 24),
+
+              // Finish Session Action
+              Center(
+                child: ElderButton(
+                  label: 'Finish Session for Today',
+                  icon: Icons.check_circle_outline,
+                  variant: ElderButtonVariant.secondary,
+                  height: 52,
+                  onPressed: _handleFinishSession,
+                ),
+              ),
+              const SizedBox(height: 16),
             ],
           ),
         ),
@@ -179,7 +416,7 @@ class _TodaysJourneyScreenState extends State<TodaysJourneyScreen> {
       onTap: onTap,
       borderRadius: BorderRadius.circular(14),
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
         decoration: BoxDecoration(
           color: isSelected ? AppColors.forestPrimary : Colors.white,
           borderRadius: BorderRadius.circular(14),
@@ -201,7 +438,7 @@ class _TodaysJourneyScreenState extends State<TodaysJourneyScreen> {
                   fontWeight: FontWeight.w700,
                   color: isSelected ? Colors.white : AppColors.textPrimary,
                 ),
-                maxLines: 2,
+                maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
@@ -211,96 +448,37 @@ class _TodaysJourneyScreenState extends State<TodaysJourneyScreen> {
     );
   }
 
-  Widget _buildActivityCard(BuildContext context, ActivityItem activity, int stepNumber, int totalSteps) {
+  Widget _buildSecondaryActivityCard(BuildContext context, ActivityItem activity) {
     return CalmCard(
-      padding: const EdgeInsets.all(20),
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      padding: const EdgeInsets.all(18),
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
         children: [
-          Row(
-            children: [
-              // Garden path step indicator badge
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: AppColors.sageLight,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  'Activity $stepNumber of $totalSteps',
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.forestDark,
-                  ),
-                ),
-              ),
-              const Spacer(),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: activity.themeColor.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  activity.modalityBadgeText,
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: activity.themeColor,
-                  ),
-                ),
-              ),
-            ],
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: activity.themeColor.withValues(alpha: 0.12),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(activity.icon, size: 26, color: activity.themeColor),
           ),
-          const SizedBox(height: 14),
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: activity.themeColor.withValues(alpha: 0.12),
-                  shape: BoxShape.circle,
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  activity.patientFriendlyTitle,
+                  style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 17),
                 ),
-                child: Icon(activity.icon, size: 30, color: activity.themeColor),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      activity.patientFriendlyTitle,
-                      style: AppTypography.patientTitle.copyWith(fontSize: 20),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(activity.subtitle, style: AppTypography.caregiverBody),
-                  ],
-                ),
-              ),
-            ],
+                const SizedBox(height: 3),
+                Text(activity.subtitle, style: AppTypography.caregiverCaption),
+              ],
+            ),
           ),
-          const SizedBox(height: 16),
-          // Cultural tags chips
-          Wrap(
-            spacing: 6,
-            children: activity.culturalTags
-                .map((tag) => Chip(
-                      label: Text(tag, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600)),
-                      backgroundColor: AppColors.surfaceWarm,
-                      padding: EdgeInsets.zero,
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                    ))
-                .toList(),
-          ),
-          const SizedBox(height: 18),
-          ElderButton(
-            label: 'Start Gently',
-            icon: Icons.play_arrow,
-            variant: ElderButtonVariant.primary,
-            height: 52,
+          IconButton.filled(
+            icon: const Icon(Icons.arrow_forward),
+            style: IconButton.styleFrom(backgroundColor: AppColors.forestPrimary),
             onPressed: () {
               Navigator.of(context).pushNamed(activity.routeName);
             },

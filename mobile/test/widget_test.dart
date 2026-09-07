@@ -8,6 +8,7 @@ import 'package:mobile/screens/language/language_selection_screen.dart';
 import 'package:mobile/screens/memory/personal_memory_space_screen.dart';
 import 'package:mobile/screens/onboarding/caregiver_onboarding_screen.dart';
 import 'package:mobile/screens/role/role_selection_screen.dart';
+import 'package:mobile/screens/session_mode/caregiver_presence_selection_screen.dart';
 import 'package:mobile/screens/splash/splash_screen.dart';
 
 void main() {
@@ -107,7 +108,7 @@ void main() {
     expect(find.text('Explore & Match'), findsOneWidget);
   });
 
-  testWidgets('Todays Journey screen renders garden path and activities', (WidgetTester tester) async {
+  testWidgets('Todays Journey screen renders recommendation hero, presence toggle, and gentle alternative', (WidgetTester tester) async {
     await tester.pumpWidget(
       const MaterialApp(
         home: TodaysJourneyScreen(),
@@ -116,9 +117,13 @@ void main() {
     await tester.pump();
 
     expect(find.text(AppStrings.get('todays_journey')), findsOneWidget);
-    expect(find.text('Is a caregiver with you right now?'), findsOneWidget);
+    expect(find.text(AppStrings.get('caregiver_present_q')), findsOneWidget);
     expect(find.text(AppStrings.get('yes_together')), findsOneWidget);
     expect(find.text(AppStrings.get('no_independent')), findsOneWidget);
+    expect(find.text("Today's Recommendation"), findsOneWidget);
+    expect(find.text('Start Recommended Activity'), findsOneWidget);
+    expect(find.text('Prefer a Quiet Moment?'), findsOneWidget);
+    expect(find.text('Finish Session for Today'), findsOneWidget);
   });
 
   testWidgets('Personal Memory Space displays category chips and memories with activity usage tags', (WidgetTester tester) async {
@@ -136,5 +141,20 @@ void main() {
     expect(find.text('Add Content'), findsOneWidget);
     expect(find.text('Grandmother’s Veranda in Tezpur'), findsOneWidget);
     expect(find.textContaining('Used in:'), findsWidgets);
+  });
+
+  testWidgets('Caregiver Presence Selection Screen displays Together and Independent choices', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: CaregiverPresenceSelectionScreen(),
+      ),
+    );
+    await tester.pump();
+
+    expect(find.text('Is a caregiver with you right now?'), findsOneWidget);
+    expect(find.text('Yes, We Are Together'), findsOneWidget);
+    expect(find.text('No, Playing on My Own'), findsOneWidget);
+    expect(find.text('Enter Together Mode'), findsOneWidget);
+    expect(find.text('Start Independent Play'), findsOneWidget);
   });
 }

@@ -17,4 +17,9 @@ class AppRoutes {
   static const String caregiverDashboard = '/caregiver_dashboard';
   static const String memoryVault = '/memory_vault';
   static const String addMemory = '/memory_add';
+  static const String sessionTriage = '/session_triage';
+  static const String togetherModeEntry = '/together_entry';
+  static const String independentModeEntry = '/independent_entry';
+  static const String activityShell = '/activity/shell';
+  static const String systemStatesShowcase = '/system_states';
 }

@@ -11,10 +11,13 @@ class GentleBackButton extends StatelessWidget {
   final String confirmationMessage;
   final VoidCallback? onExitConfirmed;
 
+  final bool showText;
+
   const GentleBackButton({
     super.key,
     this.label = 'Back',
     this.showConfirmation = false,
+    this.showText = false,
     this.confirmationTitle = 'Take a Peaceful Rest?',
     this.confirmationMessage =
         'You can return to today’s activities anytime. Everything you have done is safely preserved.',
@@ -68,6 +71,18 @@ class GentleBackButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (!showText) {
+      return IconButton(
+        icon: const Icon(
+          Icons.arrow_back_ios_new,
+          size: 22,
+          color: AppColors.forestPrimary,
+        ),
+        tooltip: label,
+        onPressed: () => _handlePress(context),
+      );
+    }
+
     return InkWell(
       onTap: () => _handlePress(context),
       borderRadius: BorderRadius.circular(12),
