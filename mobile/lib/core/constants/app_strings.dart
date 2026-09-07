@@ -37,6 +37,12 @@ class AppStrings {
       'cg_domain_executive': 'Executive Function',
       'cg_domain_orientation': 'Orientation & Context',
       'cg_domain_visuospatial': 'Visuospatial Skills',
+      'memory_vault': 'Personal Memory Space',
+      'add_memory': 'Add a Memory',
+      'system_states': 'System & AI States',
+      'session_finish': 'Finish Session for Today',
+      'continue_button': 'Continue',
+      'back_button': 'Go Back Safely',
     },
     'hi': {
       'app_title': 'स्मृति साथी',
@@ -70,6 +76,12 @@ class AppStrings {
       'cg_domain_executive': 'कार्यकारी क्षमता',
       'cg_domain_orientation': 'समय व स्थान बोध',
       'cg_domain_visuospatial': 'दृश्य-स्थानिक कौशल',
+      'memory_vault': 'व्यक्तिगत स्मृति संदूक',
+      'add_memory': 'नई स्मृति जोड़ें',
+      'system_states': 'सिस्टम और एआई स्थितियां',
+      'session_finish': 'आज का सत्र समाप्त करें',
+      'continue_button': 'आगे बढ़ें',
+      'back_button': 'सुरक्षित पीछे जाएं',
     },
     'as': {
       'app_title': 'স্মৃতি সংগী',
@@ -103,6 +115,12 @@ class AppStrings {
       'cg_domain_executive': 'কাৰ্য্যকৰী ক্ষমতা',
       'cg_domain_orientation': 'সময় আৰু স্থানবোধ',
       'cg_domain_visuospatial': 'স্থান আৰু দৃশ্যগত দক্ষতা',
+      'memory_vault': 'ব্যক্তিগত স্মৃতি ভঁৰাল',
+      'add_memory': 'নতুন স্মৃতি যোগ কৰক',
+      'system_states': 'ছিষ্টেম আৰু এআই অৱস্থা',
+      'session_finish': 'আজিৰ সত্ৰ সমাপ্ত কৰক',
+      'continue_button': 'আগবাঢ়ক',
+      'back_button': 'সুৰক্ষিতভাৱে পিছলৈ যাওক',
     },
   };
 

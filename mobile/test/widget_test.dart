@@ -257,4 +257,27 @@ void main() {
     expect(find.text("Listening to You..."), findsOneWidget);
     expect(find.byIcon(Icons.mic), findsOneWidget);
   });
+
+  test('AppStrings provides comprehensive translations across English, Hindi, and Assamese', () {
+    // English
+    AppStrings.setLanguage('en');
+    expect(AppStrings.get('memory_vault'), 'Personal Memory Space');
+    expect(AppStrings.get('todays_journey'), "Today's Gentle Journey");
+    expect(AppStrings.get('system_states'), 'System & AI States');
+
+    // Hindi
+    AppStrings.setLanguage('hi');
+    expect(AppStrings.get('memory_vault'), 'व्यक्तिगत स्मृति संदूक');
+    expect(AppStrings.get('todays_journey'), 'आज का शांत सफर');
+    expect(AppStrings.get('system_states'), 'सिस्टम और एआई स्थितियां');
+
+    // Assamese
+    AppStrings.setLanguage('as');
+    expect(AppStrings.get('memory_vault'), 'ব্যক্তিগত স্মৃতি ভঁৰাল');
+    expect(AppStrings.get('todays_journey'), 'আজিৰ শান্ত যাত্ৰা');
+    expect(AppStrings.get('system_states'), 'ছিষ্টেম আৰু এআই অৱস্থা');
+
+    // Reset back to en
+    AppStrings.setLanguage('en');
+  });
 }
