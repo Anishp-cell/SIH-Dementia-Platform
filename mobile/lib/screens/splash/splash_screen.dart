@@ -5,7 +5,6 @@ import '../../core/constants/app_strings.dart';
 import '../../core/constants/app_typography.dart';
 import '../../core/navigation/app_routes.dart';
 import '../../services/memory_service.dart';
-import '../../services/profile_service.dart';
 
 /// App Splash screen initializing offline cache, services, and establishing a calm tone.
 class SplashScreen extends StatefulWidget {
