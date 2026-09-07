@@ -40,6 +40,13 @@ class PatientProfile {
   final String? observationNote;
   final String? whatHelpedNote;
 
+  // Extended Personal & Familiar Context
+  final List<String> familiarPeople; // e.g. ["Priyanka (Daughter)", "Grandchildren"]
+  final List<String> familiarPlaces; // e.g. ["Tezpur Riverside", "Veranda Swing"]
+  final List<String> importantMemories; // e.g. ["Bihu Festival", "Family Tea Garden Trips"]
+  final List<String> personalityTraits; // e.g. ["Gentle & Observant", "Loves Music"]
+  final String? doctorRecommendations; // e.g. "Encourage unpaced relaxation, avoid time pressure"
+
   // Metadata
   final bool isComplete;
   final DateTime createdAt;
@@ -75,6 +82,11 @@ class PatientProfile {
     this.recentMoodTags = const ['calm', 'engaged'],
     this.observationNote,
     this.whatHelpedNote = 'Listening to soft flute music and looking at old photographs together brings a smile.',
+    this.familiarPeople = const ['Priyanka (Daughter)', 'Arup (Son)'],
+    this.familiarPlaces = const ['Tezpur Riverside', 'Veranda Swing'],
+    this.importantMemories = const ['Magh Bihu Feast', 'Tezpur Home'],
+    this.personalityTraits = const ['Gentle & Observant', 'Nature Lover'],
+    this.doctorRecommendations,
     this.isComplete = true,
     required this.createdAt,
     required this.updatedAt,
@@ -106,6 +118,11 @@ class PatientProfile {
     List<String>? recentMoodTags,
     String? observationNote,
     String? whatHelpedNote,
+    List<String>? familiarPeople,
+    List<String>? familiarPlaces,
+    List<String>? importantMemories,
+    List<String>? personalityTraits,
+    String? doctorRecommendations,
     bool? isComplete,
   }) {
     return PatientProfile(
@@ -135,6 +152,11 @@ class PatientProfile {
       recentMoodTags: recentMoodTags ?? this.recentMoodTags,
       observationNote: observationNote ?? this.observationNote,
       whatHelpedNote: whatHelpedNote ?? this.whatHelpedNote,
+      familiarPeople: familiarPeople ?? this.familiarPeople,
+      familiarPlaces: familiarPlaces ?? this.familiarPlaces,
+      importantMemories: importantMemories ?? this.importantMemories,
+      personalityTraits: personalityTraits ?? this.personalityTraits,
+      doctorRecommendations: doctorRecommendations ?? this.doctorRecommendations,
       isComplete: isComplete ?? this.isComplete,
       createdAt: createdAt,
       updatedAt: DateTime.now(),
