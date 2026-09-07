@@ -7,6 +7,8 @@ import 'package:mobile/screens/journey/todays_journey_screen.dart';
 import 'package:mobile/screens/language/language_selection_screen.dart';
 import 'package:mobile/screens/memory/personal_memory_space_screen.dart';
 import 'package:mobile/screens/onboarding/caregiver_onboarding_screen.dart';
+import 'package:mobile/screens/patient_activity/activity_completion_screen.dart';
+import 'package:mobile/screens/patient_activity/activity_shell_screen.dart';
 import 'package:mobile/screens/role/role_selection_screen.dart';
 import 'package:mobile/screens/session_mode/caregiver_presence_selection_screen.dart';
 import 'package:mobile/screens/splash/splash_screen.dart';
@@ -156,5 +158,51 @@ void main() {
     expect(find.text('No, Playing on My Own'), findsOneWidget);
     expect(find.text('Enter Together Mode'), findsOneWidget);
     expect(find.text('Start Independent Play'), findsOneWidget);
+  });
+
+  testWidgets('Activity Shell renders instructions, advances to ready, and enters round', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: ActivityShellScreen(),
+      ),
+    );
+    await tester.pump();
+
+    // Verify instructions state
+    expect(find.text('How We Play'), findsOneWidget);
+    expect(find.text('I am Ready'), findsOneWidget);
+
+    // Tap I am Ready
+    await tester.tap(find.text('I am Ready'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+
+    // Verify ready to start state
+    expect(find.text('Ready for Round 1?'), findsOneWidget);
+    expect(find.text('Start Round'), findsOneWidget);
+
+    // Tap Start Round
+    await tester.tap(find.text('Start Round'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+
+    // Verify interactive viewport is present
+    expect(find.text('Touch to Match Familiar Elements'), findsOneWidget);
+    expect(find.text('Need a Hint?'), findsOneWidget);
+  });
+
+  testWidgets('Activity Completion Screen displays calm celebration without numerical scores', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: ActivityCompletionScreen(
+          activityTitle: 'Familiar Nature Match',
+        ),
+      ),
+    );
+    await tester.pump();
+
+    expect(find.text('Wonderful Effort Today!'), findsOneWidget);
+    expect(find.text('Next Gentle Activity'), findsOneWidget);
+    expect(find.text('Finish Session for Today'), findsOneWidget);
   });
 }

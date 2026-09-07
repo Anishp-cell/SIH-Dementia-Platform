@@ -87,7 +87,7 @@ class ExitActivityButton extends StatelessWidget {
           onTap: () => _showConfirmation(context),
           borderRadius: BorderRadius.circular(14),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
               color: AppColors.surfaceWarm,
               borderRadius: BorderRadius.circular(14),
@@ -98,16 +98,19 @@ class ExitActivityButton extends StatelessWidget {
               children: [
                 Icon(
                   isPauseOnly ? Icons.pause_circle_outline : Icons.close,
-                  size: 22,
+                  size: 20,
                   color: AppColors.forestPrimary,
                 ),
-                const SizedBox(width: 8),
-                Text(
-                  label,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.forestPrimary,
+                const SizedBox(width: 6),
+                Flexible(
+                  child: Text(
+                    label,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.forestPrimary,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
