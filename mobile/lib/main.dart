@@ -15,6 +15,7 @@ import 'screens/session_mode/caregiver_presence_selection_screen.dart';
 import 'screens/session_mode/independent_mode_entry_screen.dart';
 import 'screens/session_mode/together_mode_entry_screen.dart';
 import 'screens/splash/splash_screen.dart';
+import 'screens/system_states/patient_system_states_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -45,6 +46,7 @@ class DementiaAssistApp extends StatelessWidget {
         AppRoutes.independentModeEntry: (context) => const IndependentModeEntryScreen(),
         AppRoutes.activityShell: (context) => const ActivityShellScreen(),
         AppRoutes.sessionCompletion: (context) => const ActivityCompletionScreen(),
+        AppRoutes.systemStatesShowcase: (context) => const PatientSystemStatesScreen(),
         '/backend_test': (context) => const BackendTestScreen(),
       },
     );

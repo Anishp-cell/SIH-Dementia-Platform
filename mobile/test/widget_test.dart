@@ -12,6 +12,7 @@ import 'package:mobile/screens/patient_activity/activity_shell_screen.dart';
 import 'package:mobile/screens/role/role_selection_screen.dart';
 import 'package:mobile/screens/session_mode/caregiver_presence_selection_screen.dart';
 import 'package:mobile/screens/splash/splash_screen.dart';
+import 'package:mobile/screens/system_states/patient_system_states_screen.dart';
 
 void main() {
   testWidgets('Splash screen displays branding and offline badge', (WidgetTester tester) async {
@@ -204,5 +205,56 @@ void main() {
     expect(find.text('Wonderful Effort Today!'), findsOneWidget);
     expect(find.text('Next Gentle Activity'), findsOneWidget);
     expect(find.text('Finish Session for Today'), findsOneWidget);
+  });
+
+  testWidgets('Patient System States Screen showcases all 15 states with interactive switcher', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: PatientSystemStatesScreen(
+          initialState: PatientSystemStateType.personalisationLoading,
+        ),
+      ),
+    );
+    await tester.pump();
+
+    // Verify State 1 renders
+    expect(find.text('STATE 1: PERSONALISATION LOADING'), findsOneWidget);
+    expect(find.text('Preparing Your Special Space'), findsOneWidget);
+
+    // Tap next state button
+    final nextButton = find.byTooltip('Next state');
+    expect(nextButton, findsOneWidget);
+    await tester.tap(nextButton);
+    await tester.pump();
+
+    // Verify State 2 renders
+    expect(find.text('STATE 2: RECOMMENDATION LOADING'), findsOneWidget);
+    expect(find.text("Finding Today's Best Moment"), findsOneWidget);
+
+    // Re-pump with Offline Mode directly
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: PatientSystemStatesScreen(
+          initialState: PatientSystemStateType.offline,
+        ),
+      ),
+    );
+    await tester.pump();
+    expect(find.text('STATE 9: OFFLINE MODE'), findsOneWidget);
+    expect(find.text('Everything is Safe on Your Device'), findsOneWidget);
+    expect(find.byIcon(Icons.cloud_off_rounded), findsOneWidget);
+
+    // Re-pump with Voice Processing directly
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: PatientSystemStatesScreen(
+          initialState: PatientSystemStateType.voiceProcessing,
+        ),
+      ),
+    );
+    await tester.pump();
+    expect(find.text('STATE 12: VOICE PROCESSING'), findsOneWidget);
+    expect(find.text("Listening to You..."), findsOneWidget);
+    expect(find.byIcon(Icons.mic), findsOneWidget);
   });
 }

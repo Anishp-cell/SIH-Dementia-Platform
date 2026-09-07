@@ -121,6 +121,13 @@ class _TodaysJourneyScreenState extends State<TodaysJourneyScreen> {
             },
           ),
           IconButton(
+            icon: const Icon(Icons.auto_awesome_outlined, color: AppColors.forestPrimary),
+            tooltip: '15 System & AI States Showcase',
+            onPressed: () {
+              Navigator.of(context).pushNamed(AppRoutes.systemStatesShowcase);
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.switch_account_outlined, color: AppColors.forestPrimary),
             tooltip: 'Switch Mode / Home',
             onPressed: () {
@@ -396,6 +403,19 @@ class _TodaysJourneyScreenState extends State<TodaysJourneyScreen> {
                   variant: ElderButtonVariant.secondary,
                   height: 52,
                   onPressed: _handleFinishSession,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Center(
+                child: TextButton.icon(
+                  icon: const Icon(Icons.science_outlined, size: 18, color: AppColors.forestPrimary),
+                  label: const Text(
+                    'Preview All 15 AI & System States',
+                    style: TextStyle(color: AppColors.forestPrimary, fontWeight: FontWeight.w600),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(AppRoutes.systemStatesShowcase);
+                  },
                 ),
               ),
               const SizedBox(height: 16),
