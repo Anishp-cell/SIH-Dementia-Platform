@@ -45,10 +45,16 @@ class DementiaAssistApp extends StatelessWidget {
         AppRoutes.togetherModeEntry: (context) => const TogetherModeEntryScreen(),
         AppRoutes.independentModeEntry: (context) => const IndependentModeEntryScreen(),
         AppRoutes.activityShell: (context) => const ActivityShellScreen(),
+        AppRoutes.independentMatch: (context) => const ActivityShellScreen(),
+        AppRoutes.cognitiveTogether: (context) => const ActivityShellScreen(),
+        AppRoutes.connectionMusic: (context) => const ActivityShellScreen(),
         AppRoutes.sessionCompletion: (context) => const ActivityCompletionScreen(),
         AppRoutes.systemStatesShowcase: (context) => const PatientSystemStatesScreen(),
         '/backend_test': (context) => const BackendTestScreen(),
       },
+      onUnknownRoute: (settings) => MaterialPageRoute(
+        builder: (context) => const ActivityShellScreen(),
+      ),
     );
   }
 }
