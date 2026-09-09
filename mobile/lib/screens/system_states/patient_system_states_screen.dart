@@ -355,7 +355,7 @@ class _PatientSystemStatesScreenState extends State<PatientSystemStatesScreen>
       clinicalDesignRule: 'Design Rule: Transparent non-clinical reason anchors familiarity and eliminates disorientation.',
       primaryButtonText: 'Begin Gently Now',
       primaryAction: () {
-        Navigator.of(context).pushNamed(AppRoutes.activityShell);
+        Navigator.of(context).pushNamed(AppRoutes.musicAndMemory);
       },
       secondaryButtonText: 'Change to Another Activity',
       secondaryAction: () => _setState(PatientSystemStateType.activityChanged),

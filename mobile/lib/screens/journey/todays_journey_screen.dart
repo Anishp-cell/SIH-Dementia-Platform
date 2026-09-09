@@ -3,7 +3,6 @@ import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_strings.dart';
 import '../../core/constants/app_typography.dart';
 import '../../core/navigation/app_routes.dart';
-import '../../models/activity_item.dart';
 import '../../models/ai_recommendation.dart';
 import '../../services/profile_service.dart';
 import '../../services/recommendation_service.dart';
@@ -120,11 +119,6 @@ class _TodaysJourneyScreenState extends State<TodaysJourneyScreen> {
             child: LanguageToggleWidget(),
           ),
           IconButton(
-            icon: const Icon(Icons.grid_view_rounded, color: AppColors.forestPrimary),
-            tooltip: 'All 8 Experiences',
-            onPressed: () => ActivitiesCatalogSheet.show(context),
-          ),
-          IconButton(
             icon: const Icon(Icons.dashboard_outlined, color: AppColors.forestPrimary),
             tooltip: 'Caregiver Dashboard',
             onPressed: () {
@@ -132,25 +126,9 @@ class _TodaysJourneyScreenState extends State<TodaysJourneyScreen> {
             },
           ),
           IconButton(
-            icon: const Icon(Icons.photo_album_outlined, color: AppColors.forestPrimary),
-            tooltip: 'Personal Memory Space',
-            onPressed: () {
-              Navigator.of(context).pushNamed(AppRoutes.memoryVault);
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.auto_awesome_outlined, color: AppColors.forestPrimary),
-            tooltip: '15 System & AI States Showcase',
-            onPressed: () {
-              Navigator.of(context).pushNamed(AppRoutes.systemStatesShowcase);
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.switch_account_outlined, color: AppColors.forestPrimary),
-            tooltip: 'Switch Mode / Home',
-            onPressed: () {
-              Navigator.of(context).pushReplacementNamed(AppRoutes.roleSelection);
-            },
+            icon: const Icon(Icons.grid_view_rounded, color: AppColors.forestPrimary),
+            tooltip: 'All 8 Experiences',
+            onPressed: () => ActivitiesCatalogSheet.show(context),
           ),
         ],
       ),
@@ -416,27 +394,36 @@ class _TodaysJourneyScreenState extends State<TodaysJourneyScreen> {
               ),
               const SizedBox(height: 24),
 
-              // Other Gentle Choices
-              const Row(
-                children: [
-                  Icon(Icons.park_outlined, color: AppColors.sage, size: 22),
-                  SizedBox(width: 8),
-                  Text('Other Gentle Activities Today', style: AppTypography.patientTitle),
-                ],
+              // Option to browse other activities without cluttering patient view
+              CalmCard(
+                backgroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+                onTap: () => ActivitiesCatalogSheet.show(context),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: AppColors.sage.withValues(alpha: 0.15),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.grid_view_rounded, color: AppColors.forestPrimary, size: 24),
+                    ),
+                    const SizedBox(width: 14),
+                    const Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Looking for a Different Activity?', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
+                          SizedBox(height: 2),
+                          Text('Browse all 8 gentle experiences anytime.', style: AppTypography.caregiverCaption),
+                        ],
+                      ),
+                    ),
+                    const Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.forestPrimary),
+                  ],
+                ),
               ),
-              const SizedBox(height: 6),
-              const Text(
-                'Explore anytime. No timers, no scoring, and no pressure.',
-                style: AppTypography.caregiverBody,
-              ),
-              const SizedBox(height: 12),
-
-              // Activity Cards for index 1 and beyond
-              ...List.generate(activities.length > 1 ? activities.length - 1 : 0, (i) {
-                final activity = activities[i + 1];
-                return _buildSecondaryActivityCard(context, activity);
-              }),
-
               const SizedBox(height: 24),
 
               // Finish Session Action
@@ -449,20 +436,7 @@ class _TodaysJourneyScreenState extends State<TodaysJourneyScreen> {
                   onPressed: _handleFinishSession,
                 ),
               ),
-              const SizedBox(height: 12),
-              Center(
-                child: TextButton.icon(
-                  icon: const Icon(Icons.science_outlined, size: 18, color: AppColors.forestPrimary),
-                  label: const Text(
-                    'Preview All 15 AI & System States',
-                    style: TextStyle(color: AppColors.forestPrimary, fontWeight: FontWeight.w600),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pushNamed(AppRoutes.systemStatesShowcase);
-                  },
-                ),
-              ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
             ],
           ),
         ),
@@ -508,46 +482,6 @@ class _TodaysJourneyScreenState extends State<TodaysJourneyScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildSecondaryActivityCard(BuildContext context, ActivityItem activity) {
-    return CalmCard(
-      padding: const EdgeInsets.all(18),
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: activity.themeColor.withValues(alpha: 0.12),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(activity.icon, size: 26, color: activity.themeColor),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  activity.patientFriendlyTitle,
-                  style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 17),
-                ),
-                const SizedBox(height: 3),
-                Text(activity.subtitle, style: AppTypography.caregiverCaption),
-              ],
-            ),
-          ),
-          IconButton.filled(
-            icon: const Icon(Icons.arrow_forward),
-            style: IconButton.styleFrom(backgroundColor: AppColors.forestPrimary),
-            onPressed: () {
-              Navigator.of(context).pushNamed(activity.routeName);
-            },
-          ),
-        ],
       ),
     );
   }

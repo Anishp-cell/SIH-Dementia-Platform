@@ -106,8 +106,7 @@ class TogetherModeEntryScreen extends StatelessWidget {
                 variant: ElderButtonVariant.primary,
                 height: 56,
                 onPressed: () {
-                  // Clean handoff to Priyanka's Together Mode route or common shell
-                  Navigator.of(context).pushNamed(AppRoutes.cognitiveTogether);
+                  Navigator.of(context).pushReplacementNamed(AppRoutes.lookAndTalk);
                 },
               ),
               const SizedBox(height: 12),

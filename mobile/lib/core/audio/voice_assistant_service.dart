@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
+import '../constants/app_strings.dart';
 
 enum MicPermissionState { notDetermined, granted, denied }
 
@@ -8,6 +10,8 @@ enum MicPermissionState { notDetermined, granted, denied }
 class VoiceAssistantService extends ChangeNotifier {
   static final VoiceAssistantService instance = VoiceAssistantService._internal();
   VoiceAssistantService._internal();
+
+  static const MethodChannel _ttsChannel = MethodChannel('com.example.mobile/tts');
 
   bool _isSpeaking = false;
   String _currentSpeakingText = '';
@@ -48,6 +52,17 @@ class VoiceAssistantService extends ChangeNotifier {
     _currentSpeakingText = text;
     notifyListeners();
 
+    try {
+      final lang = AppStrings.currentLanguage;
+      await _ttsChannel.invokeMethod('speak', {
+        'text': text,
+        'rate': _speechRate,
+        'language': lang,
+      });
+    } catch (e) {
+      debugPrint('TTS channel info: $e');
+    }
+
     // Approximate duration based on word count and speech rate
     final words = text.split(' ').length;
     final durationSeconds = ((words / (2.2 * _speechRate)).clamp(2.5, 12.0)).toInt();
@@ -61,6 +76,9 @@ class VoiceAssistantService extends ChangeNotifier {
 
   void stopSpeaking() {
     _ttsTimer?.cancel();
+    try {
+      _ttsChannel.invokeMethod('stop');
+    } catch (_) {}
     if (_isSpeaking) {
       _isSpeaking = false;
       _currentSpeakingText = '';

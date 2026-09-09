@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/audio/voice_assistant_service.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_typography.dart';
 import '../../core/navigation/app_routes.dart';
@@ -8,27 +9,29 @@ import '../../widgets/common/exit_activity_button.dart';
 import '../../widgets/common/voice_instruction_bar.dart';
 import '../patient_activity/activity_completion_screen.dart';
 
-class ColorWordStimulus {
-  final String promptInstruction;
-  final String displayedWord;
-  final Color textColor;
-  final String correctTarget;
-  final IconData targetSymbol;
-  final String natureSymbolName;
+class ColorItemStimulus {
+  final String itemName;
+  final String questionText;
+  final IconData itemIcon;
+  final Color itemColor;
+  final String correctColorName;
+  final String spokenPraise;
 
-  const ColorWordStimulus({
-    required this.promptInstruction,
-    required this.displayedWord,
-    required this.textColor,
-    required this.correctTarget,
-    required this.targetSymbol,
-    required this.natureSymbolName,
+  const ColorItemStimulus({
+    required this.itemName,
+    required this.questionText,
+    required this.itemIcon,
+    required this.itemColor,
+    required this.correctColorName,
+    required this.spokenPraise,
   });
 }
 
 /// Independent Cognitive Activity 8: Colour–Word Focus.
-/// Accessible visual focus experience that DOES NOT rely on color alone:
-/// every color choice has a distinct natural symbol and clear label (e.g. Leaf for Green, Sun for Yellow).
+/// Accessible, peaceful visual focus experience designed specifically for dementia care:
+/// - Single, clear focal item with zero Stroop confusion or contradictory words.
+/// - Unhurried, large touch targets with distinct nature symbols.
+/// - Clear question with zero duplicate text.
 class ColourWordFocusActivityScreen extends StatefulWidget {
   const ColourWordFocusActivityScreen({super.key});
 
@@ -42,30 +45,30 @@ class _ColourWordFocusActivityScreenState extends State<ColourWordFocusActivityS
   String? _feedbackText;
   bool _isSuccess = false;
 
-  final List<ColorWordStimulus> _rounds = const [
-    ColorWordStimulus(
-      promptInstruction: 'Touch the color of the TEA LEAF:',
-      displayedWord: 'GOLDEN SUN',
-      textColor: AppColors.forestPrimary, // Green
-      correctTarget: 'Green',
-      targetSymbol: Icons.eco_rounded,
-      natureSymbolName: 'Tea Leaf (Green)',
+  final List<ColorItemStimulus> _rounds = const [
+    ColorItemStimulus(
+      itemName: 'Fresh Tea Leaf',
+      questionText: 'What color is this fresh tea leaf?',
+      itemIcon: Icons.eco_rounded,
+      itemColor: AppColors.forestPrimary,
+      correctColorName: 'Green',
+      spokenPraise: 'Wonderful! The tea leaf is a fresh, gentle green.',
     ),
-    ColorWordStimulus(
-      promptInstruction: 'Touch the color of the MORNING SUN:',
-      displayedWord: 'BLUE RIVER',
-      textColor: AppColors.peachDark, // Amber/Yellow
-      correctTarget: 'Yellow',
-      targetSymbol: Icons.wb_sunny_rounded,
-      natureSymbolName: 'Morning Sun (Yellow)',
+    ColorItemStimulus(
+      itemName: 'Morning Sun',
+      questionText: 'What color is the warm morning sun?',
+      itemIcon: Icons.wb_sunny_rounded,
+      itemColor: AppColors.peachDark,
+      correctColorName: 'Yellow',
+      spokenPraise: 'Lovely noticing! The morning sun is warm golden yellow.',
     ),
-    ColorWordStimulus(
-      promptInstruction: 'Touch the color of the BRAHMAPUTRA WATER:',
-      displayedWord: 'LOTUS FLOWER',
-      textColor: AppColors.domainOrientation, // Blue
-      correctTarget: 'Blue',
-      targetSymbol: Icons.water_rounded,
-      natureSymbolName: 'River Water (Blue)',
+    ColorItemStimulus(
+      itemName: 'Brahmaputra River',
+      questionText: 'What color is the calm river water?',
+      itemIcon: Icons.water_rounded,
+      itemColor: AppColors.domainOrientation,
+      correctColorName: 'Blue',
+      spokenPraise: 'Beautiful! The calm river water is serene blue.',
     ),
   ];
 
@@ -98,19 +101,21 @@ class _ColourWordFocusActivityScreenState extends State<ColourWordFocusActivityS
 
   void _onAnswerSelected(String selectedColorName) {
     final stimulus = _rounds[_currentRound];
-    final isCorrect = selectedColorName == stimulus.correctTarget;
+    final isCorrect = selectedColorName == stimulus.correctColorName;
 
     setState(() {
       _isSuccess = isCorrect;
       if (isCorrect) {
-        _feedbackText = 'Wonderful! You touched ${stimulus.natureSymbolName}.';
+        _feedbackText = 'Wonderful! You chose ${stimulus.correctColorName}.';
+        VoiceAssistantService.instance.speak(stimulus.spokenPraise);
       } else {
-        _feedbackText = 'No hurry! Take a gentle look at the symbol: ${stimulus.natureSymbolName}.';
+        _feedbackText = 'Take all the time you need. Notice the gentle ${stimulus.correctColorName} color.';
+        VoiceAssistantService.instance.speak('Take all the time you need. Look at the color of the ${stimulus.itemName}.');
       }
     });
 
     if (isCorrect) {
-      Future.delayed(const Duration(milliseconds: 1400), () {
+      Future.delayed(const Duration(milliseconds: 1600), () {
         if (mounted) {
           _advanceRound();
         }
@@ -156,14 +161,14 @@ class _ColourWordFocusActivityScreenState extends State<ColourWordFocusActivityS
         actions: [
           Container(
             margin: const EdgeInsets.only(right: 16),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
             decoration: BoxDecoration(
               color: AppColors.surfaceWarm,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: AppColors.borderSoft),
             ),
             child: Text(
-              'Round ${_currentRound + 1} of $_totalRounds',
+              'Item ${_currentRound + 1} of $_totalRounds',
               style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: AppColors.forestDark),
             ),
           ),
@@ -175,55 +180,52 @@ class _ColourWordFocusActivityScreenState extends State<ColourWordFocusActivityS
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              // Voice Instruction Bar at the top — speaks calmly
               VoiceInstructionBar(
-                instructionText: stimulus.promptInstruction,
+                instructionText: stimulus.questionText,
                 autoPlay: false,
               ),
-              const SizedBox(height: 18),
+              const SizedBox(height: 20),
 
-              // Stimulus Card
+              // Single Large Focal Item Card (NO duplicate question)
               CalmCard(
-                padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 20),
+                padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 20),
                 child: Column(
                   children: [
+                    // Large nature icon in its natural, authentic color
+                    Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        color: stimulus.itemColor.withValues(alpha: 0.14),
+                        shape: BoxShape.circle,
+                        border: Border.all(color: stimulus.itemColor.withValues(alpha: 0.4), width: 2),
+                      ),
+                      child: Icon(stimulus.itemIcon, size: 54, color: stimulus.itemColor),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Clear item title
                     Text(
-                      stimulus.promptInstruction,
-                      style: AppTypography.patientTitle,
+                      stimulus.itemName,
+                      style: AppTypography.patientHero.copyWith(fontSize: 24),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 18),
+                    const SizedBox(height: 8),
 
-                    // High-contrast word display with color and natural symbol
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                      decoration: BoxDecoration(
-                        color: AppColors.surfaceWarm,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: stimulus.textColor.withValues(alpha: 0.4), width: 2),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(stimulus.targetSymbol, size: 36, color: stimulus.textColor),
-                          const SizedBox(width: 14),
-                          Text(
-                            stimulus.displayedWord,
-                            style: TextStyle(
-                              fontSize: 26,
-                              fontWeight: FontWeight.w900,
-                              color: stimulus.textColor,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                        ],
-                      ),
+                    // Clear, unrepeated prompt
+                    Text(
+                      'Touch the matching color below:',
+                      style: AppTypography.patientBody.copyWith(fontSize: 16, color: AppColors.textSecondary),
+                      textAlign: TextAlign.center,
                     ),
                   ],
                 ),
               ),
 
-              const SizedBox(height: 18),
+              const SizedBox(height: 20),
 
+              // Supportive Feedback Banner
               if (_feedbackText != null) ...[
                 CalmCard(
                   backgroundColor: _isSuccess ? AppColors.sageLight : AppColors.peachLight,
@@ -231,8 +233,12 @@ class _ColourWordFocusActivityScreenState extends State<ColourWordFocusActivityS
                   padding: const EdgeInsets.all(14),
                   child: Row(
                     children: [
-                      Icon(_isSuccess ? Icons.check_circle : Icons.favorite, size: 22, color: _isSuccess ? AppColors.forestDark : AppColors.peachDark),
-                      const SizedBox(width: 10),
+                      Icon(
+                        _isSuccess ? Icons.check_circle : Icons.favorite,
+                        size: 24,
+                        color: _isSuccess ? AppColors.forestDark : AppColors.peachDark,
+                      ),
+                      const SizedBox(width: 12),
                       Expanded(
                         child: Text(
                           _feedbackText!,
@@ -246,10 +252,10 @@ class _ColourWordFocusActivityScreenState extends State<ColourWordFocusActivityS
                     ],
                   ),
                 ),
-                const SizedBox(height: 18),
+                const SizedBox(height: 20),
               ],
 
-              // Answer Buttons Grid (Accessible: large targets, distinct symbols & text)
+              // Answer Buttons Grid (Accessible, spacious, 4 options)
               GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),

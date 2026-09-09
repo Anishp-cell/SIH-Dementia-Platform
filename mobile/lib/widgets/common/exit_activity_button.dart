@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_typography.dart';
+import '../../core/navigation/app_routes.dart';
 import 'elder_button.dart';
 
 /// Accessible exit / pause button for patient-facing activities.
@@ -71,7 +72,11 @@ class ExitActivityButton extends StatelessWidget {
       if (onExitConfirmed != null) {
         onExitConfirmed!();
       } else {
-        Navigator.of(context).maybePop();
+        if (!Navigator.of(context).canPop()) {
+          Navigator.of(context).pushReplacementNamed(AppRoutes.todaysJourney);
+        } else {
+          Navigator.of(context).pop();
+        }
       }
     }
   }

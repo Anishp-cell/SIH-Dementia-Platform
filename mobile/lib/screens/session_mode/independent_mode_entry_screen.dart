@@ -90,7 +90,7 @@ class IndependentModeEntryScreen extends StatelessWidget {
                 variant: ElderButtonVariant.primary,
                 height: 56,
                 onPressed: () {
-                  Navigator.of(context).pushNamed(AppRoutes.activityShell);
+                  Navigator.of(context).pushReplacementNamed(AppRoutes.rememberRecall);
                 },
               ),
               const SizedBox(height: 12),
