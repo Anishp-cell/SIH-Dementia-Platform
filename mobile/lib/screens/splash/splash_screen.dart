@@ -2,11 +2,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_strings.dart';
-import '../../core/constants/app_typography.dart';
 import '../../core/navigation/app_routes.dart';
-import '../../services/memory_service.dart';
+import '../../services/profile_service.dart';
 
-/// App Splash screen initializing offline cache, services, and establishing a calm tone.
+/// Smriti Splash Screen.
+/// Pure, calm, unhurried — just the name and lotus in the center.
+/// - Returning users: gentle glow + fetching, then directly to journey.
+/// - First-time users: name fades in, then "Start" appears softly.
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -15,46 +17,69 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _pulseController;
-  late Animation<double> _scaleAnimation;
-  late Animation<double> _fadeAnimation;
+    with TickerProviderStateMixin {
+  late AnimationController _logoController;
+  late AnimationController _buttonController;
+  late Animation<double> _logoFade;
+  late Animation<double> _logoScale;
+  late Animation<double> _buttonFade;
+  late Animation<Offset> _buttonSlide;
+  bool _showStartButton = false;
+  bool _isReturningUser = false;
 
   @override
   void initState() {
     super.initState();
-    _pulseController = AnimationController(
+
+    // Logo animation — slow gentle fade & gentle scale
+    _logoController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1400),
+      duration: const Duration(milliseconds: 1600),
+    );
+    _logoFade = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _logoController, curve: const Interval(0.0, 0.7, curve: Curves.easeIn)),
+    );
+    _logoScale = Tween<double>(begin: 0.82, end: 1.0).animate(
+      CurvedAnimation(parent: _logoController, curve: Curves.easeOutCubic),
     );
 
-    _scaleAnimation = Tween<double>(begin: 0.88, end: 1.0).animate(
-      CurvedAnimation(parent: _pulseController, curve: Curves.easeOutCubic),
+    // Button animation — slides up gently
+    _buttonController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
     );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _pulseController, curve: Curves.easeIn),
+    _buttonFade = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _buttonController, curve: Curves.easeOut),
+    );
+    _buttonSlide = Tween<Offset>(begin: const Offset(0, 0.4), end: Offset.zero).animate(
+      CurvedAnimation(parent: _buttonController, curve: Curves.easeOutCubic),
     );
 
-    _pulseController.forward();
-    _initializeApp();
+    _logoController.forward();
+    _checkUserFlow();
   }
 
-  Future<void> _initializeApp() async {
-    // Initialize background offline services safely
-    MemoryService.instance.initialize();
-    
-    // Smooth, calm unhurried splash duration
-    await Future.delayed(const Duration(milliseconds: 1800));
+  Future<void> _checkUserFlow() async {
+    final hasProfile = ProfileService.instance.hasProfile;
 
-    if (!mounted) return;
-
-    // Navigate to Language Selection on first launch
-    Navigator.of(context).pushReplacementNamed(AppRoutes.language);
+    if (hasProfile) {
+      setState(() => _isReturningUser = true);
+      await Future.delayed(const Duration(milliseconds: 2200));
+      if (!mounted) return;
+      Navigator.of(context).pushReplacementNamed(AppRoutes.todaysJourney);
+    } else {
+      // Show logo for 2 seconds, then reveal Start button
+      await Future.delayed(const Duration(milliseconds: 2000));
+      if (!mounted) return;
+      setState(() => _showStartButton = true);
+      _buttonController.forward();
+    }
   }
 
   @override
   void dispose() {
-    _pulseController.dispose();
+    _logoController.dispose();
+    _buttonController.dispose();
     super.dispose();
   }
 
@@ -63,106 +88,151 @@ class _SplashScreenState extends State<SplashScreen>
     return Scaffold(
       backgroundColor: AppColors.backgroundWarm,
       body: SafeArea(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 32.0),
-            child: AnimatedBuilder(
-              animation: _pulseController,
-              builder: (context, child) {
-                return Opacity(
-                  opacity: _fadeAnimation.value,
-                  child: Transform.scale(
-                    scale: _scaleAnimation.value,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Spacer(),
-                        // Calm botanical icon representing gentle growth & memory
-                        Container(
-                          width: 110,
-                          height: 110,
-                          decoration: BoxDecoration(
-                            color: AppColors.surfaceWarm,
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: AppColors.sage.withValues(alpha: 0.4),
-                              width: 2,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColors.forestPrimary.withValues(alpha: 0.08),
-                                blurRadius: 24,
-                                offset: const Offset(0, 8),
-                              ),
-                            ],
-                          ),
-                          child: const Icon(
-                            Icons.spa,
-                            size: 58,
-                            color: AppColors.forestPrimary,
-                          ),
+        child: AnimatedBuilder(
+          animation: _logoController,
+          builder: (context, _) {
+            return Opacity(
+              opacity: _logoFade.value,
+              child: Transform.scale(
+                scale: _logoScale.value,
+                child: Column(
+                  children: [
+                    const Spacer(flex: 3),
+
+                    // Lotus icon — large, warm, centered
+                    Container(
+                      width: 120,
+                      height: 120,
+                      decoration: BoxDecoration(
+                        color: AppColors.surfaceWarm,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: AppColors.forestPrimary.withValues(alpha: 0.25),
+                          width: 3,
                         ),
-                        const SizedBox(height: 28),
-                        Text(
-                          AppStrings.get('app_title'),
-                          style: AppTypography.patientHero.copyWith(
-                            fontSize: 32,
-                            color: AppColors.forestPrimary,
-                            fontWeight: FontWeight.w800,
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.forestPrimary.withValues(alpha: 0.12),
+                            blurRadius: 36,
+                            offset: const Offset(0, 10),
+                            spreadRadius: 2,
                           ),
-                          textAlign: TextAlign.center,
+                        ],
+                      ),
+                      child: const Icon(
+                        Icons.spa_rounded,
+                        size: 62,
+                        color: AppColors.forestPrimary,
+                      ),
+                    ),
+
+                    const SizedBox(height: 30),
+
+                    // App name — large, warm, confident
+                    Text(
+                      AppStrings.get('app_title'),
+                      style: const TextStyle(
+                        fontSize: 42,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.forestPrimary,
+                        letterSpacing: -0.5,
+                        height: 1.1,
+                      ),
+                    ),
+
+                    const SizedBox(height: 10),
+
+                    // Tagline — warm, readable
+                    Text(
+                      AppStrings.get('tagline'),
+                      style: const TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.textSecondary,
+                        letterSpacing: 0.1,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+
+                    const Spacer(flex: 2),
+
+                    // Returning user state
+                    if (_isReturningUser) ...[
+                      const SizedBox(
+                        width: 28,
+                        height: 28,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 3,
+                          color: AppColors.forestPrimary,
                         ),
-                        const SizedBox(height: 10),
-                        Text(
-                          AppStrings.get('tagline'),
-                          style: AppTypography.patientBody.copyWith(
-                            color: AppColors.textSecondary,
-                            fontSize: 18,
-                          ),
-                          textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 14),
+                      Text(
+                        AppStrings.get('fetching_profile'),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: AppColors.textSecondary,
+                          fontWeight: FontWeight.w500,
                         ),
-                        const Spacer(),
-                        // Offline & Privacy Reassurance Badge
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 10,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.sageLight.withValues(alpha: 0.6),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: AppColors.sage.withValues(alpha: 0.4),
-                            ),
-                          ),
-                          child: const Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.offline_bolt_outlined,
-                                size: 18,
-                                color: AppColors.forestDark,
-                              ),
-                              SizedBox(width: 8),
-                              Text(
-                                'Works 100% Offline • Private & Safe',
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.forestDark,
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 40),
+                    ],
+
+                    // First-time user: Start button slides up
+                    if (_showStartButton && !_isReturningUser)
+                      AnimatedBuilder(
+                        animation: _buttonController,
+                        builder: (context, _) {
+                          return Opacity(
+                            opacity: _buttonFade.value,
+                            child: SlideTransition(
+                              position: _buttonSlide,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                                child: Column(
+                                  children: [
+                                    SizedBox(
+                                      width: double.infinity,
+                                      height: 62,
+                                      child: ElevatedButton(
+                                        onPressed: () => Navigator.of(context)
+                                            .pushReplacementNamed(AppRoutes.caregiverWelcome),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: AppColors.forestPrimary,
+                                          foregroundColor: Colors.white,
+                                          elevation: 4,
+                                          shadowColor: AppColors.forestPrimary.withValues(alpha: 0.35),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(20),
+                                          ),
+                                        ),
+                                        child: Text(
+                                          AppStrings.get('start_button'),
+                                          style: const TextStyle(
+                                            fontSize: 22,
+                                            fontWeight: FontWeight.w800,
+                                            letterSpacing: 0.5,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 32),
+                                  ],
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
+                            ),
+                          );
+                        },
+                      ),
+
+                    if (!_showStartButton && !_isReturningUser)
+                      const SizedBox(height: 90),
+                  ],
+                ),
+              ),
+            );
+          },
         ),
       ),
     );

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
-import '../constants/app_typography.dart';
 
-/// Accessible Theme configuration tailored for elderly users and caregivers.
+/// Smriti Theme — warm amber sunrise palette.
+/// Accessible, familiar, elder-friendly. High contrast, large touch targets.
 class AppTheme {
   AppTheme._();
 
@@ -27,7 +27,11 @@ class AppTheme {
         foregroundColor: AppColors.textPrimary,
         elevation: 0,
         centerTitle: false,
-        titleTextStyle: AppTypography.caregiverHeading,
+        titleTextStyle: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.w700,
+          color: AppColors.textPrimary,
+        ),
         iconTheme: IconThemeData(
           color: AppColors.forestPrimary,
           size: 28,
@@ -37,24 +41,30 @@ class AppTheme {
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.forestPrimary,
           foregroundColor: AppColors.textOnPrimary,
-          minimumSize: const Size(double.infinity, 58),
-          elevation: 1,
+          minimumSize: const Size(double.infinity, 62),
+          elevation: 3,
+          shadowColor: AppColors.forestPrimary,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(20),
           ),
-          textStyle: AppTypography.patientButton,
+          textStyle: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w800,
+          ),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.forestPrimary,
-          minimumSize: const Size(double.infinity, 58),
+          minimumSize: const Size(double.infinity, 62),
           side: const BorderSide(color: AppColors.forestPrimary, width: 2),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(20),
           ),
-          textStyle: AppTypography.patientButton.copyWith(
+          textStyle: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
             color: AppColors.forestPrimary,
           ),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
@@ -66,12 +76,49 @@ class AppTheme {
         margin: const EdgeInsets.symmetric(vertical: 8),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
-          side: const BorderSide(color: AppColors.borderSoft, width: 1.2),
+          side: const BorderSide(color: AppColors.borderSoft, width: 1.5),
         ),
       ),
       dividerTheme: const DividerThemeData(
         color: AppColors.divider,
         thickness: 1,
+      ),
+      chipTheme: const ChipThemeData(
+        backgroundColor: Colors.white,
+        selectedColor: AppColors.sageLight,
+        labelStyle: TextStyle(
+          fontSize: 15,
+          fontWeight: FontWeight.w600,
+          color: AppColors.textPrimary,
+        ),
+        padding: EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        side: BorderSide(color: AppColors.borderSoft),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: Colors.white,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: AppColors.borderSoft, width: 1.5),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: AppColors.borderSoft, width: 1.5),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: AppColors.forestPrimary, width: 2.5),
+        ),
+        labelStyle: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          color: AppColors.textSecondary,
+        ),
+        hintStyle: const TextStyle(
+          fontSize: 15,
+          color: AppColors.textTertiary,
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
       ),
     );
   }

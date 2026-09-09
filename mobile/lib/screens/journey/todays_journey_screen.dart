@@ -10,7 +10,9 @@ import '../../services/recommendation_service.dart';
 import '../../widgets/common/calm_card.dart';
 import '../../widgets/common/elder_button.dart';
 import '../../widgets/common/feedback_banner.dart';
+import '../../widgets/common/language_toggle_widget.dart';
 import '../../widgets/common/voice_instruction_bar.dart';
+import '../activities/activities_catalog_sheet.dart';
 
 /// Screen representing Today's Gentle Journey (Patient Home).
 /// Driven by dynamic recommendation model, offers large touch targets,
@@ -23,7 +25,7 @@ class TodaysJourneyScreen extends StatefulWidget {
 }
 
 class _TodaysJourneyScreenState extends State<TodaysJourneyScreen> {
-  bool _isCaregiverPresent = true;
+  bool _isCaregiverPresent = false;
 
   @override
   void initState() {
@@ -113,6 +115,22 @@ class _TodaysJourneyScreenState extends State<TodaysJourneyScreen> {
       appBar: AppBar(
         title: Text(AppStrings.get('todays_journey'), style: AppTypography.patientTitle),
         actions: [
+          const Padding(
+            padding: EdgeInsets.only(right: 6.0),
+            child: LanguageToggleWidget(),
+          ),
+          IconButton(
+            icon: const Icon(Icons.grid_view_rounded, color: AppColors.forestPrimary),
+            tooltip: 'All 8 Experiences',
+            onPressed: () => ActivitiesCatalogSheet.show(context),
+          ),
+          IconButton(
+            icon: const Icon(Icons.dashboard_outlined, color: AppColors.forestPrimary),
+            tooltip: 'Caregiver Dashboard',
+            onPressed: () {
+              Navigator.of(context).pushNamed(AppRoutes.caregiverDashboard);
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.photo_album_outlined, color: AppColors.forestPrimary),
             tooltip: 'Personal Memory Space',
@@ -207,7 +225,37 @@ class _TodaysJourneyScreenState extends State<TodaysJourneyScreen> {
                   ],
                 ),
               ),
-              const SizedBox(height: 20),
+              // No Game Today Gentle Alternative Banner if recommended
+              if (RecommendationService.instance.isNoGameRecommended) ...[
+                CalmCard(
+                  backgroundColor: AppColors.peachLight,
+                  borderColor: AppColors.peach,
+                  padding: const EdgeInsets.all(18),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.spa_rounded, color: AppColors.peachDark, size: 30),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Gentle Rest Day Recommended',
+                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: AppColors.peachDark),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              RecommendationService.instance.gentleAlternativeDescription,
+                              style: const TextStyle(fontSize: 13, color: AppColors.textPrimary, height: 1.3),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 18),
+              ],
 
               // Dynamic Hero Card: Today's Recommended Activity
               if (primaryActivity != null) ...[
@@ -316,11 +364,7 @@ class _TodaysJourneyScreenState extends State<TodaysJourneyScreen> {
                         variant: ElderButtonVariant.primary,
                         height: 58,
                         onPressed: () {
-                          if (_isCaregiverPresent) {
-                            Navigator.of(context).pushNamed(AppRoutes.togetherModeEntry);
-                          } else {
-                            Navigator.of(context).pushNamed(AppRoutes.independentModeEntry);
-                          }
+                          Navigator.of(context).pushNamed(primaryActivity.routeName);
                         },
                       ),
                     ],

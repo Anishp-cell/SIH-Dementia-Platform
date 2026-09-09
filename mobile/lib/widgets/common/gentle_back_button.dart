@@ -10,6 +10,7 @@ class GentleBackButton extends StatelessWidget {
   final String confirmationTitle;
   final String confirmationMessage;
   final VoidCallback? onExitConfirmed;
+  final VoidCallback? onPressed;
 
   final bool showText;
 
@@ -22,12 +23,14 @@ class GentleBackButton extends StatelessWidget {
     this.confirmationMessage =
         'You can return to today’s activities anytime. Everything you have done is safely preserved.',
     this.onExitConfirmed,
+    this.onPressed,
   });
 
   Future<void> _handlePress(BuildContext context) async {
+    final callback = onPressed ?? onExitConfirmed;
     if (!showConfirmation) {
-      if (onExitConfirmed != null) {
-        onExitConfirmed!();
+      if (callback != null) {
+        callback();
       } else {
         Navigator.of(context).maybePop();
       }

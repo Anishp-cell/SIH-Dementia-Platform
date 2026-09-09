@@ -104,22 +104,79 @@ class RecommendationService extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Returns 3 curated activities for Today's Journey based on caregiver presence
+  String _activeDifficulty = 'Gentle';
+  String? _lastCaregiverMood;
+  bool _isNoGameRecommended = false;
+  String _gentleAlternativeTitle = 'Quiet River Soundscape & Memories';
+  String _gentleAlternativeDescription = 'Rest gently by the sound of Tezpur river waters and look at beloved family photographs.';
+
+  String get activeDifficulty => _activeDifficulty;
+  String? get lastCaregiverMood => _lastCaregiverMood;
+  bool get isNoGameRecommended => _isNoGameRecommended;
+  String get gentleAlternativeTitle => _gentleAlternativeTitle;
+  String get gentleAlternativeDescription => _gentleAlternativeDescription;
+
+  /// Adapts recommendation when a caregiver provides session feedback
+  void applyCaregiverObservation({
+    required List<String> moodTags,
+    String? recommendationPreference,
+  }) {
+    if (moodTags.isEmpty) return;
+    _lastCaregiverMood = moodTags.first;
+
+    final lowerMoods = moodTags.map((m) => m.toLowerCase()).toSet();
+
+    if (lowerMoods.contains('tired') || lowerMoods.contains('anxious') || lowerMoods.contains('withdrawn') || lowerMoods.contains('irritated')) {
+      // Gentle shift: suggest quiet connection or no game
+      _activeDifficulty = 'Gentle';
+      _isNoGameRecommended = true;
+      _gentleAlternativeTitle = 'Gentle Flute & Veranda Rest';
+      _gentleAlternativeDescription = 'Take a soothing pause with bamboo flute melodies and quiet tea memories.';
+    } else if (lowerMoods.contains('engaged') || lowerMoods.contains('calm')) {
+      // Comfortable: normal cognitive engagement
+      _isNoGameRecommended = false;
+      _activeDifficulty = 'Standard';
+    } else {
+      _isNoGameRecommended = false;
+      _activeDifficulty = 'Gentle';
+    }
+
+    notifyListeners();
+  }
+
+  void toggleNoGameRecommendation(bool enabled) {
+    _isNoGameRecommended = enabled;
+    notifyListeners();
+  }
+
+  /// Returns curated activities for Today's Journey based on caregiver presence and adaptive state
   List<ActivityItem> getTodaysJourneyActivities({required bool isCaregiverPresent}) {
     final catalog = MockDataRepository.getCatalogActivities();
+
+    if (_isNoGameRecommended) {
+      // Return calming connection activities (Look & Talk, Music & Memory, Story from Photo)
+      return [
+        catalog.firstWhere((a) => a.id == 'act_music_and_memory', orElse: () => catalog.first),
+        catalog.firstWhere((a) => a.id == 'act_look_and_talk', orElse: () => catalog[1]),
+        catalog.firstWhere((a) => a.id == 'act_story_from_photo', orElse: () => catalog[2]),
+      ];
+    }
+
     if (isCaregiverPresent) {
       // Prioritize Cognitive Together and Connection Together
       return [
-        catalog.firstWhere((a) => a.modality == ActivityModality.cognitiveTogether),
-        catalog.firstWhere((a) => a.modality == ActivityModality.connectionTogether),
-        catalog.firstWhere((a) => a.modality == ActivityModality.independent),
+        catalog.firstWhere((a) => a.id == 'act_family_match', orElse: () => catalog.first),
+        catalog.firstWhere((a) => a.id == 'act_build_the_day', orElse: () => catalog[1]),
+        catalog.firstWhere((a) => a.id == 'act_look_and_talk', orElse: () => catalog[2]),
+        catalog.firstWhere((a) => a.id == 'act_music_and_memory', orElse: () => catalog[3]),
       ];
     } else {
-      // Independent cognitive and gentle connection
+      // Independent cognitive and gentle self-guided activities
       return [
-        catalog.firstWhere((a) => a.modality == ActivityModality.independent),
-        catalog.firstWhere((a) => a.modality == ActivityModality.connectionTogether),
-        catalog.firstWhere((a) => a.id == 'act_morning_sequence'),
+        catalog.firstWhere((a) => a.id == 'act_remember_recall', orElse: () => catalog.first),
+        catalog.firstWhere((a) => a.id == 'act_colour_word_focus', orElse: () => catalog[1]),
+        catalog.firstWhere((a) => a.id == 'act_familiar_object_match', orElse: () => catalog[2]),
+        catalog.firstWhere((a) => a.id == 'act_music_and_memory', orElse: () => catalog[3]),
       ];
     }
   }

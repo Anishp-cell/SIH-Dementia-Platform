@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Smriti warm cream — matches AppColors.backgroundWarm -->
+    <color name="smriti_background">#FFF8F0</color>
+</resources>

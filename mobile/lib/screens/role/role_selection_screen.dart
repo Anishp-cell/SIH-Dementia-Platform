@@ -223,7 +223,11 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                 borderWidth: 1.8,
                 padding: const EdgeInsets.all(22),
                 onTap: () {
-                  Navigator.of(context).pushNamed(AppRoutes.caregiverOnboarding);
+                  if (hasProfile) {
+                    Navigator.of(context).pushNamed(AppRoutes.caregiverDashboard);
+                  } else {
+                    Navigator.of(context).pushNamed(AppRoutes.caregiverOnboarding);
+                  }
                 },
                 child: Row(
                   children: [
@@ -252,8 +256,10 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                             ),
                           ),
                           const SizedBox(height: 4),
-                          const Text(
-                            'Personalize activities, routines, memories, and view supportive trends.',
+                          Text(
+                            hasProfile
+                                ? 'View dashboard, memory vault, and daily observations.'
+                                : 'Personalize activities, routines, memories, and view supportive trends.',
                             style: AppTypography.caregiverBody,
                           ),
                         ],
