@@ -749,12 +749,11 @@ class _CaregiverOnboardingScreenState extends State<CaregiverOnboardingScreen> {
     return Scaffold(
       backgroundColor: AppColors.backgroundWarm,
       body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 40.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
                 // Heart & Botanical Celebration Icon
                 Container(
                   width: 96,
@@ -857,8 +856,7 @@ class _CaregiverOnboardingScreenState extends State<CaregiverOnboardingScreen> {
                   onPressed: _finishAndStartJourney,
                 ),
                 const SizedBox(height: 16),
-              ],
-            ),
+            ],
           ),
         ),
       ),

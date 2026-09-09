@@ -296,11 +296,21 @@ class _TodaysJourneyScreenState extends State<TodaysJourneyScreen> {
               ] else if (primaryActivity != null) ...[
                 // Active Recommendation Hero Card
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Icon(Icons.auto_awesome, color: AppColors.forestPrimary, size: 22),
+                    Flexible(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.auto_awesome, color: AppColors.forestPrimary, size: 22),
+                          const SizedBox(width: 8),
+                          Flexible(
+                            child: Text("Today's Recommendation", style: AppTypography.patientTitle),
+                          ),
+                        ],
+                      ),
+                    ),
                     const SizedBox(width: 8),
-                    const Text("Today's Recommendation", style: AppTypography.patientTitle),
-                    const Spacer(),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
