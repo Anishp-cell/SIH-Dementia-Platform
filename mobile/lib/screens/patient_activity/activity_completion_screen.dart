@@ -96,20 +96,23 @@ class ActivityCompletionScreen extends StatelessWidget {
 
               const SizedBox(height: 28),
 
-              // Next Activity Action
+              // Next Activity Action - routes to Caregiver Observation for personalization
               ElderButton(
                 label: 'Next Gentle Activity',
-                icon: Icons.play_arrow,
+                icon: Icons.rate_review_outlined,
                 variant: ElderButtonVariant.primary,
                 height: 56,
                 onPressed: onNextActivity ??
                     () {
-                      Navigator.of(context).pushReplacementNamed(AppRoutes.todaysJourney);
+                      Navigator.of(context).pushReplacementNamed(
+                        AppRoutes.caregiverFeedback,
+                        arguments: {'activityTitle': activityTitle},
+                      );
                     },
               ),
               const SizedBox(height: 12),
 
-              // Finish Session Action
+              // Return Home Action
               ElderButton(
                 label: 'Finish Session for Today',
                 icon: Icons.home_outlined,

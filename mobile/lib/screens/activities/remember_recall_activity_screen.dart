@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_typography.dart';
-import '../../core/navigation/app_routes.dart';
 import '../../widgets/common/calm_card.dart';
 import '../../widgets/common/elder_button.dart';
 import '../../widgets/common/exit_activity_button.dart';
@@ -113,14 +112,8 @@ class _RememberRecallActivityScreenState extends State<RememberRecallActivityScr
     } else {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (_) => ActivityCompletionScreen(
+          builder: (_) => const ActivityCompletionScreen(
             activityTitle: 'Remember & Recall',
-            onNextActivity: () {
-              Navigator.of(context).pushReplacementNamed(AppRoutes.colourWordFocus);
-            },
-            onFinishSession: () {
-              Navigator.of(context).pushReplacementNamed(AppRoutes.caregiverFeedback);
-            },
           ),
         ),
       );

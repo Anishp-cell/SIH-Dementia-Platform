@@ -128,8 +128,8 @@ class _CaregiverOnboardingScreenState extends State<CaregiverOnboardingScreen> {
       drVoice: _part3VoiceNote,
     );
 
-    // Navigate to Caregiver Presence Selection ("With Caregiver" vs "Without Caregiver")
-    Navigator.of(context).pushReplacementNamed(AppRoutes.sessionTriage);
+    // Navigate to Activity Profile (6 Domains) to show organized domain profile
+    Navigator.of(context).pushReplacementNamed(AppRoutes.domainOverview);
   }
 
   @override

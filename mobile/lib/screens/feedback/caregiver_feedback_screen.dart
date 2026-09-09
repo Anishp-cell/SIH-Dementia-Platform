@@ -35,17 +35,14 @@ class _CaregiverFeedbackScreenState extends State<CaregiverFeedbackScreen> {
   bool _isRecordingVoice = false;
   bool _hasRecordedVoice = false;
   bool _isSubmitted = false;
-  final String _recommendationPreference = 'keep_similar';
+  String _recommendationPreference = 'keep_similar';
 
   final List<String> _observationTags = [
-    'Calm',
     'Engaged',
-    'Quiet',
+    'Calm',
     'Tired',
-    'Anxious',
-    'Irritated',
-    'Withdrawn',
-    'Other',
+    'Confused',
+    'Frustrated',
   ];
 
   @override
@@ -235,6 +232,19 @@ class _CaregiverFeedbackScreenState extends State<CaregiverFeedbackScreen> {
                 ),
               ),
 
+              const SizedBox(height: 22),
+
+              // Personalisation & Difficulty Preference
+              const Text('How should tomorrow\'s experience adapt?', style: AppTypography.caregiverSubheading),
+              const SizedBox(height: 10),
+              _buildAdaptationChoice('keep_similar', 'Just Right', 'Maintain current comfortable pace', Icons.auto_awesome),
+              const SizedBox(height: 8),
+              _buildAdaptationChoice('too_easy', 'Too Easy', 'Increase gentle challenge next time', Icons.trending_up),
+              const SizedBox(height: 8),
+              _buildAdaptationChoice('too_hard', 'Too Difficult', 'Make simpler or switch domain', Icons.tune),
+              const SizedBox(height: 8),
+              _buildAdaptationChoice('needs_rest', 'Tired / Distressed', 'Recommend "No Game Today" (Quiet music / rest)', Icons.nightlight_round),
+
               const SizedBox(height: 28),
 
               // Submit Button
@@ -284,6 +294,56 @@ class _CaregiverFeedbackScreenState extends State<CaregiverFeedbackScreen> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAdaptationChoice(String value, String title, String subtitle, IconData icon) {
+    final isSelected = _recommendationPreference == value;
+    return InkWell(
+      onTap: () => setState(() => _recommendationPreference = value),
+      borderRadius: BorderRadius.circular(14),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.sageLight : Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: isSelected ? AppColors.forestPrimary : AppColors.borderSoft,
+            width: isSelected ? 1.8 : 1.0,
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: isSelected ? AppColors.forestPrimary : AppColors.surfaceWarm,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, size: 18, color: isSelected ? Colors.white : AppColors.forestPrimary),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: isSelected ? AppColors.forestDark : AppColors.textPrimary,
+                    ),
+                  ),
+                  Text(subtitle, style: AppTypography.caregiverCaption),
+                ],
+              ),
+            ),
+            if (isSelected)
+              const Icon(Icons.check_circle, color: AppColors.forestPrimary, size: 20),
+          ],
         ),
       ),
     );

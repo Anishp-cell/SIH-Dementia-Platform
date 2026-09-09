@@ -198,19 +198,19 @@ class _DomainOverviewScreenState extends State<DomainOverviewScreen> {
                 padding: const EdgeInsets.all(18),
                 child: Row(
                   children: [
-                    const Icon(Icons.support, color: AppColors.forestPrimary, size: 28),
+                    const Icon(Icons.auto_awesome, color: AppColors.forestPrimary, size: 28),
                     const SizedBox(width: 14),
                     const Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Support Plan (Caregiver Overview)',
+                            'Personalized Activity Profile',
                             style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
                           ),
                           SizedBox(height: 4),
                           Text(
-                            'All activities map to these 6 domains. Tap the tune icon on any card to adjust support pace.',
+                            'Your profile inputs have been organized into these 6 cognitive domains to shape today\'s personalized experiences.',
                             style: AppTypography.caregiverBody,
                           ),
                         ],
@@ -220,7 +220,7 @@ class _DomainOverviewScreenState extends State<DomainOverviewScreen> {
                 ),
               ),
               const SizedBox(height: 18),
-              const Text('Active Domain Recommendations', style: AppTypography.caregiverHeading),
+              const Text('Active Domain Allocations', style: AppTypography.caregiverHeading),
               const SizedBox(height: 10),
               // 6 Domain Cards
               ...domains.map((domain) => DomainBadge(
@@ -229,9 +229,10 @@ class _DomainOverviewScreenState extends State<DomainOverviewScreen> {
                   )),
               const SizedBox(height: 24),
               ElderButton(
-                label: 'Start Today’s Gentle Journey',
-                icon: Icons.play_arrow,
+                label: 'Enter Today\'s Experience',
+                icon: Icons.arrow_forward_rounded,
                 variant: ElderButtonVariant.primary,
+                height: 56,
                 onPressed: () {
                   Navigator.of(context).pushReplacementNamed(AppRoutes.todaysJourney);
                 },

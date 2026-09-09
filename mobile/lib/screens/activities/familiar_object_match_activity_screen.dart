@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_typography.dart';
-import '../../core/navigation/app_routes.dart';
 import '../../widgets/common/calm_card.dart';
 import '../../widgets/common/elder_button.dart';
 import '../../widgets/common/exit_activity_button.dart';
@@ -204,14 +203,8 @@ class _FamiliarObjectMatchActivityScreenState extends State<FamiliarObjectMatchA
           if (mounted) {
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(
-                builder: (_) => ActivityCompletionScreen(
+                builder: (_) => const ActivityCompletionScreen(
                   activityTitle: 'Familiar Object Match',
-                  onNextActivity: () {
-                    Navigator.of(context).pushReplacementNamed(AppRoutes.rememberRecall);
-                  },
-                  onFinishSession: () {
-                    Navigator.of(context).pushReplacementNamed(AppRoutes.caregiverFeedback);
-                  },
                 ),
               ),
             );

@@ -104,14 +104,8 @@ class _LookAndTalkActivityScreenState extends State<LookAndTalkActivityScreen> {
       // Completed all photos peacefully
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (_) => ActivityCompletionScreen(
+          builder: (_) => const ActivityCompletionScreen(
             activityTitle: 'Look & Talk',
-            onNextActivity: () {
-              Navigator.of(context).pushReplacementNamed(AppRoutes.musicAndMemory);
-            },
-            onFinishSession: () {
-              Navigator.of(context).pushReplacementNamed(AppRoutes.caregiverFeedback);
-            },
           ),
         ),
       );

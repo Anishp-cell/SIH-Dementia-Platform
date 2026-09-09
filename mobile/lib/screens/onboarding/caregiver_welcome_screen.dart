@@ -165,7 +165,7 @@ class CaregiverWelcomeScreen extends StatelessWidget {
                     GestureDetector(
                       onTap: () {
                         ProfileService.instance.loadProfile(useMock: true);
-                        Navigator.of(context).pushReplacementNamed(AppRoutes.todaysJourney);
+                        Navigator.of(context).pushReplacementNamed(AppRoutes.domainOverview);
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),

@@ -126,12 +126,27 @@ class RecommendationService extends ChangeNotifier {
 
     final lowerMoods = moodTags.map((m) => m.toLowerCase()).toSet();
 
-    if (lowerMoods.contains('tired') || lowerMoods.contains('anxious') || lowerMoods.contains('withdrawn') || lowerMoods.contains('irritated')) {
-      // Gentle shift: suggest quiet connection or no game
+    if (lowerMoods.contains('tired') ||
+        lowerMoods.contains('confused') ||
+        lowerMoods.contains('frustrated') ||
+        lowerMoods.contains('anxious') ||
+        lowerMoods.contains('withdrawn') ||
+        lowerMoods.contains('irritated') ||
+        recommendationPreference == 'needs_rest' ||
+        recommendationPreference == 'more_music') {
+      // Gentle shift: suggest quiet connection, music, reminiscence or no game
       _activeDifficulty = 'Gentle';
       _isNoGameRecommended = true;
       _gentleAlternativeTitle = 'Gentle Flute & Veranda Rest';
-      _gentleAlternativeDescription = 'Take a soothing pause with bamboo flute melodies and quiet tea memories.';
+      _gentleAlternativeDescription = 'Take a soothing pause with bamboo flute melodies, quiet conversation, and tea memories.';
+    } else if (recommendationPreference == 'too_easy' || recommendationPreference == 'increase_challenge') {
+      // Patient found it easy: adapt with a slightly higher focus / cognitive level
+      _isNoGameRecommended = false;
+      _activeDifficulty = 'Focus';
+    } else if (recommendationPreference == 'too_hard' || recommendationPreference == 'gentler') {
+      // Patient struggled: make simpler or switch domain
+      _isNoGameRecommended = false;
+      _activeDifficulty = 'Gentle';
     } else if (lowerMoods.contains('engaged') || lowerMoods.contains('calm')) {
       // Comfortable: normal cognitive engagement
       _isNoGameRecommended = false;
