@@ -18,12 +18,19 @@ class CaregiverWelcomeScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // Top bar with language toggle only — no branding clutter
+            // Top bar with back to splash navigation and language toggle
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+              padding: const EdgeInsets.fromLTRB(16, 16, 20, 0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: const [LanguageToggleWidget()],
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back_rounded, color: AppColors.forestPrimary, size: 28),
+                    tooltip: 'Back to Smriti Start',
+                    onPressed: () => Navigator.of(context).pushReplacementNamed(AppRoutes.splash),
+                  ),
+                  const LanguageToggleWidget(),
+                ],
               ),
             ),
 
@@ -35,22 +42,36 @@ class CaregiverWelcomeScreen extends StatelessWidget {
                   children: [
                     const SizedBox(height: 8),
 
-                    // Heart icon — warm and human
-                    Container(
-                      width: 80,
-                      height: 80,
-                      decoration: BoxDecoration(
-                        color: AppColors.sageLight,
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: AppColors.forestPrimary.withValues(alpha: 0.3),
-                          width: 2.5,
+                    // Smriti lotus icon — tapping takes back to the app name & logo splash screen
+                    Tooltip(
+                      message: 'Back to Smriti Start',
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(40),
+                        onTap: () => Navigator.of(context).pushReplacementNamed(AppRoutes.splash),
+                        child: Container(
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            color: AppColors.surfaceWarm,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: AppColors.forestPrimary.withValues(alpha: 0.35),
+                              width: 2.5,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.forestPrimary.withValues(alpha: 0.12),
+                                blurRadius: 18,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: const Icon(
+                            Icons.spa_rounded,
+                            size: 44,
+                            color: AppColors.forestPrimary,
+                          ),
                         ),
-                      ),
-                      child: const Icon(
-                        Icons.favorite_rounded,
-                        size: 40,
-                        color: AppColors.forestPrimary,
                       ),
                     ),
 

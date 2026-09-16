@@ -88,7 +88,11 @@ class _CaregiverOnboardingScreenState extends State<CaregiverOnboardingScreen> {
         _currentPart--;
       });
     } else {
-      Navigator.of(context).pop();
+      if (Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      } else {
+        Navigator.of(context).pushReplacementNamed(AppRoutes.caregiverWelcome);
+      }
     }
   }
 
@@ -138,16 +142,36 @@ class _CaregiverOnboardingScreenState extends State<CaregiverOnboardingScreen> {
       return _buildCompletionScreen();
     }
 
-    return Scaffold(
-      backgroundColor: AppColors.backgroundWarm,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        _previousPart();
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.backgroundWarm,
       appBar: AppBar(
         leading: GentleBackButton(onPressed: _previousPart),
-        title: Text(
-          'Step $_currentPart of 3',
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-            color: AppColors.forestPrimary,
+        title: InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap: () => Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.splash, (route) => false),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.spa_rounded, color: AppColors.forestPrimary, size: 22),
+                const SizedBox(width: 8),
+                Text(
+                  'Step $_currentPart of 3',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.forestPrimary,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
         actions: const [
@@ -223,7 +247,8 @@ class _CaregiverOnboardingScreenState extends State<CaregiverOnboardingScreen> {
           ],
         ),
       ),
-    );
+    ),
+  );
   }
 
   Widget _buildCurrentPartContent() {

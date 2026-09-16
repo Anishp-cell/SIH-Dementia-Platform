@@ -87,7 +87,9 @@ class DomainBadge extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
+                Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 6,
                   children: [
                     Text(
                       domain.patientFriendlyName,
@@ -97,7 +99,6 @@ class DomainBadge extends StatelessWidget {
                         color: AppColors.textPrimary,
                       ),
                     ),
-                    const SizedBox(width: 8),
                     Text(
                       '(${domain.formalName})',
                       style: const TextStyle(
