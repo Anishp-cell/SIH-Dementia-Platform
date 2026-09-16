@@ -1,8 +1,16 @@
 import 'dart:convert';
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  static const String baseUrl = 'http://10.0.2.2:5000';
+  static String get baseUrl {
+    if (kIsWeb) return 'http://127.0.0.1:5000';
+    try {
+      if (Platform.isAndroid) return 'http://10.0.2.2:5000';
+    } catch (_) {}
+    return 'http://127.0.0.1:5000';
+  }
 
   static Future<String> testBackend() async {
     try {
