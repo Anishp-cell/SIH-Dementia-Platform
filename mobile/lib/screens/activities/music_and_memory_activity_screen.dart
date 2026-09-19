@@ -8,6 +8,7 @@ import '../../widgets/common/calm_card.dart';
 import '../../widgets/common/elder_button.dart';
 import '../../widgets/common/exit_activity_button.dart';
 import '../../widgets/common/voice_instruction_bar.dart';
+import '../../services/profile_service.dart';
 import '../../services/session_service.dart';
 import '../patient_activity/activity_completion_screen.dart';
 
@@ -146,6 +147,8 @@ class _MusicAndMemoryActivityScreenState extends State<MusicAndMemoryActivityScr
     final bgGradient = song['bgGradient'] as List<Color>;
     final prompt = song['prompt'] as String;
     final caregiverNote = song['caregiverNote'] as String;
+    final patient = ProfileService.instance.activeProfile;
+    final favoriteGenres = patient?.favoriteMusicGenres ?? [];
 
     return Scaffold(
       backgroundColor: AppColors.backgroundWarm,
@@ -182,7 +185,49 @@ class _MusicAndMemoryActivityScreenState extends State<MusicAndMemoryActivityScr
                 instructionText: 'Listen to the soothing melody. Let any peaceful memories surface naturally.',
                 autoPlay: false,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 14),
+
+              // Personalized Favorite Music Genres from Profile
+              if (favoriteGenres.isNotEmpty) ...[
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 6,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: AppColors.surfaceWarm,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: AppColors.borderSoft),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.favorite_rounded, size: 14, color: AppColors.forestPrimary),
+                          const SizedBox(width: 6),
+                          Text(
+                            "${patient?.preferredName ?? 'Loved One'}'s Favorites:",
+                            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12.5, color: AppColors.forestDark),
+                          ),
+                        ],
+                      ),
+                    ),
+                    ...favoriteGenres.map((g) => Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: AppColors.forestPrimary.withValues(alpha: 0.3)),
+                          ),
+                          child: Text(
+                            g,
+                            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12.5, color: AppColors.textPrimary),
+                          ),
+                        )),
+                  ],
+                ),
+                const SizedBox(height: 14),
+              ],
 
               // Music Player Artwork & Card
               Container(
