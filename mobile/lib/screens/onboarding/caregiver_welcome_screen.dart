@@ -186,7 +186,7 @@ class CaregiverWelcomeScreen extends StatelessWidget {
                       variant: ElderButtonVariant.primary,
                       height: 62,
                       onPressed: () {
-                        Navigator.of(context).pushNamed(AppRoutes.caregiverOnboarding);
+                        Navigator.of(context).pushNamed(AppRoutes.roleSelection);
                       },
                     ),
 
