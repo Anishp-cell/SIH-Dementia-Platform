@@ -4,6 +4,7 @@ import '../../core/constants/app_typography.dart';
 import '../../models/memory_item.dart';
 import '../../services/memory_service.dart';
 import '../../services/profile_service.dart';
+import '../../services/session_service.dart';
 import '../../widgets/common/calm_card.dart';
 import '../../widgets/common/elder_button.dart';
 import '../../widgets/common/exit_activity_button.dart';
@@ -84,6 +85,7 @@ class _FamilyMatchActivityScreenState extends State<FamilyMatchActivityScreen> {
   @override
   void initState() {
     super.initState();
+    SessionService.instance.startActivityByTitle(activityTitle: 'Family Match & Tell');
     _loadFamilyPool();
     _setupRound();
   }
@@ -325,6 +327,7 @@ class _FamilyMatchActivityScreenState extends State<FamilyMatchActivityScreen> {
         );
       } else {
         // Complete activity
+        SessionService.instance.completeSession();
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (_) => const ActivityCompletionScreen(
@@ -337,6 +340,7 @@ class _FamilyMatchActivityScreenState extends State<FamilyMatchActivityScreen> {
   }
 
   void _giveCaregiverHint() {
+    SessionService.instance.recordHint();
     // Find an unmatched pair and highlight one
     for (int i = 0; i < _cards.length; i++) {
       if (!_cards[i].isMatched) {

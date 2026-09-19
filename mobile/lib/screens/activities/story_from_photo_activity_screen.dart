@@ -6,6 +6,7 @@ import '../../widgets/common/calm_card.dart';
 import '../../widgets/common/elder_button.dart';
 import '../../widgets/common/exit_activity_button.dart';
 import '../../widgets/common/voice_instruction_bar.dart';
+import '../../services/session_service.dart';
 import '../patient_activity/activity_completion_screen.dart';
 
 /// Connection Together Activity 3: Story from Photo.
@@ -23,6 +24,12 @@ class _StoryFromPhotoActivityScreenState extends State<StoryFromPhotoActivityScr
   int _promptStep = 0; // 0: Setting, 1: People & Moments, 2: Feelings
   bool _isSpeaking = false;
   bool _isRecordingVoice = false;
+
+  @override
+  void initState() {
+    super.initState();
+    SessionService.instance.startActivityByTitle(activityTitle: 'Story from Photo');
+  }
 
   final List<Map<String, dynamic>> _stories = [
     {
@@ -103,6 +110,7 @@ class _StoryFromPhotoActivityScreenState extends State<StoryFromPhotoActivityScr
           _promptStep = 0;
         });
       } else {
+        SessionService.instance.completeSession();
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (_) => const ActivityCompletionScreen(

@@ -5,6 +5,7 @@ import '../../widgets/common/calm_card.dart';
 import '../../widgets/common/elder_button.dart';
 import '../../widgets/common/exit_activity_button.dart';
 import '../../widgets/common/voice_instruction_bar.dart';
+import '../../services/session_service.dart';
 import '../patient_activity/activity_completion_screen.dart';
 
 enum RecallPhase { memorize, recall, feedback }
@@ -54,6 +55,7 @@ class _RememberRecallActivityScreenState extends State<RememberRecallActivityScr
   @override
   void initState() {
     super.initState();
+    SessionService.instance.startActivityByTitle(activityTitle: 'Remember & Recall');
     _setupRound();
   }
 
@@ -110,6 +112,7 @@ class _RememberRecallActivityScreenState extends State<RememberRecallActivityScr
         _setupRound();
       });
     } else {
+      SessionService.instance.completeSession();
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (_) => const ActivityCompletionScreen(

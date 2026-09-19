@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_typography.dart';
 import '../../services/profile_service.dart';
+import '../../services/session_service.dart';
 import '../../widgets/common/calm_card.dart';
 import '../../widgets/common/elder_button.dart';
 import '../../widgets/common/exit_activity_button.dart';
@@ -76,6 +77,7 @@ class _BuildTheDayActivityScreenState extends State<BuildTheDayActivityScreen> {
   @override
   void initState() {
     super.initState();
+    SessionService.instance.startActivityByTitle(activityTitle: 'Build the Day Together');
     _loadRoutineAnchors();
     _initShuffledSequence();
   }
@@ -198,6 +200,7 @@ class _BuildTheDayActivityScreenState extends State<BuildTheDayActivityScreen> {
   }
 
   void _finishActivity() {
+    SessionService.instance.completeSession();
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
         builder: (_) => const ActivityCompletionScreen(

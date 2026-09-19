@@ -7,6 +7,7 @@ import '../../widgets/common/calm_card.dart';
 import '../../widgets/common/elder_button.dart';
 import '../../widgets/common/exit_activity_button.dart';
 import '../../widgets/common/voice_instruction_bar.dart';
+import '../../services/session_service.dart';
 import '../patient_activity/activity_completion_screen.dart';
 
 /// Connection Together Activity 2: Music & Memory.
@@ -63,6 +64,7 @@ class _MusicAndMemoryActivityScreenState extends State<MusicAndMemoryActivityScr
   @override
   void initState() {
     super.initState();
+    SessionService.instance.startActivityByTitle(activityTitle: 'Music & Memory');
     _startPlayback();
   }
 
@@ -104,6 +106,7 @@ class _MusicAndMemoryActivityScreenState extends State<MusicAndMemoryActivityScr
       _startPlayback();
     } else {
       // Finished all songs
+      SessionService.instance.completeSession();
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (_) => const ActivityCompletionScreen(
