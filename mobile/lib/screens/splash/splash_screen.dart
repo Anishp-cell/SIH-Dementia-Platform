@@ -154,6 +154,40 @@ class _SplashScreenState extends State<SplashScreen>
                       textAlign: TextAlign.center,
                     ),
 
+                    const SizedBox(height: 12),
+
+                    // ASTEYA Co-branding Badge
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: AppColors.surfaceWarm,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: AppColors.forestPrimary.withValues(alpha: 0.25),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.eco_rounded,
+                            size: 14,
+                            color: AppColors.forestPrimary,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            'AN ASTEYA INITIATIVE',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 1.1,
+                              color: AppColors.forestDark.withValues(alpha: 0.85),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
                     const Spacer(flex: 2),
 
                     // Returning user state

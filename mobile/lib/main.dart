@@ -29,8 +29,9 @@ import 'screens/session_mode/together_mode_entry_screen.dart';
 import 'screens/splash/splash_screen.dart';
 import 'screens/system_states/patient_system_states_screen.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await AppStrings.loadSavedLanguage();
   runApp(const DementiaAssistApp());
 }
 

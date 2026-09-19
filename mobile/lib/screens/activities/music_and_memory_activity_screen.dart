@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../core/audio/voice_assistant_service.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_typography.dart';
@@ -85,18 +86,23 @@ class _MusicAndMemoryActivityScreenState extends State<MusicAndMemoryActivityScr
   }
 
   void _togglePlayPause() {
+    SystemSound.play(SystemSoundType.click);
+    HapticFeedback.selectionClick();
     setState(() {
       _isPlaying = !_isPlaying;
     });
   }
 
   void _speakPrompt(String text) async {
+    HapticFeedback.lightImpact();
     setState(() => _isSpeakingPrompt = true);
     await VoiceAssistantService.instance.speak(text);
     if (mounted) setState(() => _isSpeakingPrompt = false);
   }
 
   void _nextSong() {
+    SystemSound.play(SystemSoundType.click);
+    HapticFeedback.mediumImpact();
     _playbackTimer?.cancel();
     if (_currentSongIndex < _songs.length - 1) {
       setState(() {
