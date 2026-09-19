@@ -67,6 +67,19 @@ class SessionService extends ChangeNotifier {
     }
   }
 
+  /// Clears session history from memory and local disk (for clean demo presentation)
+  Future<void> clearHistory() async {
+    _completedSessionsHistory.clear();
+    _lastCompletedSession = null;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_sessionsStorageKey);
+    } catch (e) {
+      debugPrint('Error clearing session history: $e');
+    }
+    notifyListeners();
+  }
+
   void startSession(ActivityItem activity, String patientId) {
     _activeActivity = activity;
     _patientId = patientId;

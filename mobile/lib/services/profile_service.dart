@@ -108,6 +108,17 @@ class ProfileService extends ChangeNotifier {
     _clearProfileFromDisk();
   }
 
+  /// Resets to clean Bonti Baruah demo profile for presentations
+  Future<void> resetToDemoProfile() async {
+    _activeProfile = MockDataRepository.createSamplePatient();
+    _hasCompletedOnboarding = true;
+    generalVoiceNote = null;
+    observationVoiceNote = null;
+    doctorVoiceNote = null;
+    notifyListeners();
+    await _persistProfileToDisk();
+  }
+
   Future<void> _clearProfileFromDisk() async {
     try {
       final prefs = await SharedPreferences.getInstance();

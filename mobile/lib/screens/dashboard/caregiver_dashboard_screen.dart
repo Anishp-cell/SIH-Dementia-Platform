@@ -173,6 +173,54 @@ class _CaregiverDashboardScreenState extends State<CaregiverDashboardScreen> {
     );
   }
 
+  void _confirmResetDemo() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Row(
+          children: [
+            Icon(Icons.restart_alt_rounded, color: AppColors.forestPrimary),
+            SizedBox(width: 8),
+            Text('Reset Demo Story', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+          ],
+        ),
+        content: const Text(
+          'This will reset the active session to the fresh Bonti Baruah demo profile with baseline activity consistency for your presentation.',
+          style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.forestPrimary,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+            onPressed: () async {
+              await ProfileService.instance.resetToDemoProfile();
+              await SessionService.instance.clearHistory();
+              if (ctx.mounted) Navigator.of(ctx).pop();
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Demo profile reset successfully for presentation.'),
+                    backgroundColor: AppColors.forestPrimary,
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              }
+            },
+            child: const Text('Reset Demo'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final patient = ProfileService.instance.activeProfile ?? MockDataRepository.createSamplePatient();
@@ -191,8 +239,13 @@ class _CaregiverDashboardScreenState extends State<CaregiverDashboardScreen> {
         title: const Text('Caregiver Dashboard', style: AppTypography.caregiverHeading),
         actions: [
           const Padding(
-            padding: EdgeInsets.only(right: 8.0),
+            padding: EdgeInsets.only(right: 4.0),
             child: LanguageToggleWidget(),
+          ),
+          IconButton(
+            icon: const Icon(Icons.restart_alt_rounded, color: AppColors.forestPrimary),
+            tooltip: 'Reset Demo Profile',
+            onPressed: _confirmResetDemo,
           ),
           IconButton(
             icon: const Icon(Icons.grid_view_rounded, color: AppColors.forestPrimary),
