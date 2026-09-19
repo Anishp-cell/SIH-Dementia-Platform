@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+  import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_strings.dart';
 import '../../core/navigation/app_routes.dart';
@@ -29,7 +29,17 @@ class CaregiverWelcomeScreen extends StatelessWidget {
                     tooltip: 'Back to Smriti Start',
                     onPressed: () => Navigator.of(context).pushReplacementNamed(AppRoutes.splash),
                   ),
-                  const LanguageToggleWidget(),
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.science_outlined, color: AppColors.forestPrimary, size: 26),
+                        tooltip: 'AI & Backend Diagnostics',
+                        onPressed: () => Navigator.of(context).pushNamed('/backend_test'),
+                      ),
+                      const SizedBox(width: 4),
+                      const LanguageToggleWidget(),
+                    ],
+                  ),
                 ],
               ),
             ),

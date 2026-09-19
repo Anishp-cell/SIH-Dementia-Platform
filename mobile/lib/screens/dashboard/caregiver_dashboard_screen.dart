@@ -136,6 +136,11 @@ class _CaregiverDashboardScreenState extends State<CaregiverDashboardScreen> {
             tooltip: '15 System States',
             onPressed: () => Navigator.of(context).pushNamed(AppRoutes.systemStatesShowcase),
           ),
+          IconButton(
+            icon: const Icon(Icons.science_outlined, color: AppColors.forestPrimary),
+            tooltip: 'AI & Backend Diagnostics',
+            onPressed: () => Navigator.of(context).pushNamed('/backend_test'),
+          ),
         ],
       ),
       body: SafeArea(
