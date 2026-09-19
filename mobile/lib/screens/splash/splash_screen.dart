@@ -60,16 +60,18 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> _checkUserFlow() async {
+    await ProfileService.instance.loadProfile(useMock: false);
     final hasProfile = ProfileService.instance.hasProfile;
 
     if (hasProfile) {
+      if (!mounted) return;
       setState(() => _isReturningUser = true);
-      await Future.delayed(const Duration(milliseconds: 2200));
+      await Future.delayed(const Duration(milliseconds: 1500));
       if (!mounted) return;
       Navigator.of(context).pushReplacementNamed(AppRoutes.todaysJourney);
     } else {
-      // Show logo for 2 seconds, then reveal Start button
-      await Future.delayed(const Duration(milliseconds: 2000));
+      // Show logo, then reveal Start button
+      await Future.delayed(const Duration(milliseconds: 1400));
       if (!mounted) return;
       setState(() => _showStartButton = true);
       _buttonController.forward();
